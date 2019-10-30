@@ -3,7 +3,11 @@ package com.example.qiitaapplication
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
+/**
+ * EndlessScrollListenerクラス
+ *
+ * @param mLinearLayoutManager
+ */
 abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLayoutManager) :
     RecyclerView.OnScrollListener() {
 
@@ -15,6 +19,14 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
     private var loading = true
     private var current_page = 1
 
+    /**
+     * onScrolledメソッド
+     *
+     * @param recyclerView
+     * @param dx
+     * @param dy
+     *
+     */
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
@@ -38,5 +50,11 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
         }
     }
 
+    /**
+     * onLoadMoreメソッド
+     *
+     * @param current_page
+     *
+     */
     abstract fun onLoadMore(current_page: Int)
 }

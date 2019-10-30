@@ -20,19 +20,25 @@ import okhttp3.*
 import java.io.IOException
 
 
-
-
-
-
-
+/**
+ * Qiita記事一覧アクティビティ.
+ */
 class MainActivity : AppCompatActivity() {
 
     private val handler = Handler()
-    private val customAdapter by lazy { RecyclerListAdapter() }
-    private val swiprefreshLayout by lazy { findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)}
 
+    /** RecyclerListAdapter */
+    private val customAdapter by lazy { RecyclerListAdapter() }
+    /** swiprefreshLayout */
+    private val swiprefreshLayout by lazy { findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)}
+    /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
+    /**
+     * onCreateメソッド
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,7 +73,11 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
+    /**
+     * RecyclerListViewHolderクラスs
+     *
+     * @param itemView
+     */
     private inner class RecyclerListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // リスト1行分中でメニュー名を表示する画面部品
         var articleTitle: TextView
@@ -80,11 +90,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * RecyclerListAdapterクラス
+     *
+     */
     private inner class RecyclerListAdapter() :
         RecyclerView.Adapter<RecyclerListViewHolder>() {
 
 
-
+        /**
+         * refreshメソッド
+         *
+         * @param list
+         */
         fun refresh(list: List<QiitaResponse>) {
             items.apply {
                 //clear()
@@ -93,6 +111,14 @@ class MainActivity : AppCompatActivity() {
             notifyDataSetChanged()
         }
 
+        /**
+         * onCreateViewHolderメソッド
+         *
+         * @param parent
+         * @param viewType
+         * @return RecyclerListViewHolder
+         *
+         */
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerListViewHolder {
             // レイアウトインフレータを取得。
             val inflater = LayoutInflater.from(applicationContext)
@@ -120,6 +146,13 @@ class MainActivity : AppCompatActivity() {
             return holder
         }
 
+        /**
+         * onBindViewHolderメソッド
+         *
+         * @param holder
+         * @param position
+         *
+         */
         override fun onBindViewHolder(holder: RecyclerListViewHolder, position: Int) {
             val data = items[position]
             holder.articleTitle.text = data.title
@@ -127,12 +160,23 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        /**
+         * getItemCountメソッド
+         *
+         * @return Int
+         */
         override fun getItemCount(): Int {
             // リストデータ中の件数をリターン。
             return items.size
         }
     }
 
+    /**
+     * updateData
+     *
+     * @param page
+     *
+     */
     public fun updateData(page: Int) {
         val client = OkHttpClient()
         val request = Request.Builder()
