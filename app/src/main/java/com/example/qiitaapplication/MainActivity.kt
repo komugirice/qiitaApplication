@@ -46,6 +46,42 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initialize()
+    }
+
+    /**
+     * initializeメソッド
+     *
+     */
+    private fun initialize() {
+        initLayout()
+        initData()
+    }
+
+    /**
+     * initDataメソッド
+     *
+     */
+    private fun initData() {
+        // QiitaAPI実行
+        updateData(1)
+    }
+
+    /**
+     * initLayoutメソッド
+     *
+     */
+    private fun initLayout() {
+        initClick()
+        initRecyclerView()
+        initSwipeRefreshLayout()
+    }
+
+    /**
+     * initRecyclerViewメソッド
+     *
+     */
+    private fun initRecyclerView() {
         // RecyclerViewを取得。
         val articleListView = findViewById<RecyclerView>(R.id.articleList)
         // LinearLayoutManagerオブジェクトを生成。
@@ -58,8 +94,7 @@ class MainActivity : AppCompatActivity() {
         val decorator = DividerItemDecoration(applicationContext, layout.orientation)
         // RecyclerViewに区切り線オブジェクトを設定
         articleListView.addItemDecoration(decorator)
-        // QiitaAPI実行
-        updateData(1)
+
 
         // スクロール対応
         articleListView.addOnScrollListener(object :
@@ -68,12 +103,29 @@ class MainActivity : AppCompatActivity() {
                 updateData(current_page)
             }
         })
+    }
 
+    /**
+     * initSwipeRefreshLayoutメソッド
+     *
+     */
+    private fun initSwipeRefreshLayout() {
         // swiprefreshLayout対応
         swiprefreshLayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             // 引っ張って離した時に呼ばれます。
             swiprefreshLayout.isRefreshing = false
         })
+    }
+
+
+    /**
+     * initClickメソッド
+     *
+     */
+    private fun initClick() {
+        closeImageView.setOnClickListener {
+            finish()
+        }
     }
 
     /**
