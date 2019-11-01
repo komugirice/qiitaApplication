@@ -18,6 +18,9 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
+import java.text.SimpleDateFormat
+
+
 
 
 /**
@@ -61,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         // スクロール対応
         articleListView.addOnScrollListener(object :
             EndlessScrollListener(articleListView.getLayoutManager() as LinearLayoutManager) {
-            override fun onLoadMore(page: Int) {
-                updateData(page)
+            override fun onLoadMore(current_page: Int) {
+                updateData(current_page)
             }
         })
 
@@ -74,42 +77,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * RecyclerListViewHolderクラスs
-     *
-     * @param itemView
-     */
-    private inner class RecyclerListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // リスト1行分中でメニュー名を表示する画面部品
-        var articleTitle: TextView
-
-
-        init {
-            // 引数で渡されたリスト1行分の画面部品中から表示に使われるTextViewを取得。
-            articleTitle = itemView.findViewById(R.id.articleTitle)
-
-        }
-    }
-
-    /**
      * RecyclerListAdapterクラス
      *
      */
     private inner class RecyclerListAdapter() :
         RecyclerView.Adapter<RecyclerListViewHolder>() {
 
-
-        /**
-         * refreshメソッド
-         *
-         * @param list
-         */
-        fun refresh(list: List<QiitaResponse>) {
-            items.apply {
-                //clear()
-                addAll(list)
-            }
-            notifyDataSetChanged()
-        }
 
         /**
          * onCreateViewHolderメソッド
@@ -134,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onClick(view:  View) {
 
                     val position = holder.adapterPosition // positionを取得
-                    // 何かの処理をします
+                    // クリック時の処理
                     val url = items[position].url
                     val intent = Intent(applicationContext, WebViewActivity::class.java)
                     intent.putExtra("url", url)
@@ -155,7 +128,14 @@ class MainActivity : AppCompatActivity() {
          */
         override fun onBindViewHolder(holder: RecyclerListViewHolder, position: Int) {
             val data = items[position]
-            holder.articleTitle.text = data.title
+            holder.articleTitle.text = data.title   // タイトル
+            holder.userName.text = data.user.name   // ユーザ名
+            holder.likes_count.text = data.likes_count.toString()   // お気に入り数
+            val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            val requiredFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val getDate = existingUTCFormat.parse(data.created_at);
+            val dateStr = requiredFormat.format(getDate)
+            holder.created_at.text = dateStr   // 作成日
             //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 
         }
@@ -168,6 +148,43 @@ class MainActivity : AppCompatActivity() {
         override fun getItemCount(): Int {
             // リストデータ中の件数をリターン。
             return items.size
+        }
+
+
+        /**
+         * refreshメソッド
+         *
+         * @param list
+         */
+        fun refresh(list: List<QiitaResponse>) {
+            items.apply {
+                //clear()
+                addAll(list)
+            }
+            notifyDataSetChanged()
+        }
+    }
+
+    /**
+     * RecyclerListViewHolderクラスs
+     *
+     * @param itemView
+     */
+    private inner class RecyclerListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        // リスト1行分中でメニュー名を表示する画面部品
+        var articleTitle: TextView
+        var userName: TextView
+        var likes_count: TextView
+        var created_at: TextView
+
+
+        init {
+            // 引数で渡されたリスト1行分の画面部品中から表示に使われるTextViewを取得。
+            articleTitle = itemView.findViewById(R.id.articleTitle)
+            userName = itemView.findViewById(R.id.userName)
+            likes_count = itemView.findViewById(R.id.likes_count)
+            created_at = itemView.findViewById(R.id.created_at)
+
         }
     }
 
