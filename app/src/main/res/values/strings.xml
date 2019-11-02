@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">qiitaApplication</string>
+    <string name="title_article_list">Qiita記事一覧</string>
+    <string name="label_user_name">ユーザ名：</string>
+    <string name="label_likes_count">お気に入り数：</string>
+    <string name="label_created_at">作成日：</string>
+</resources>

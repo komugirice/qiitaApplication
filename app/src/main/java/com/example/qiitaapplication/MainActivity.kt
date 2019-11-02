@@ -90,11 +90,11 @@ class MainActivity : AppCompatActivity() {
         articleListView.layoutManager = layout
         // RecyclerViewにアダプタオブジェクトを設定。
         articleListView.adapter = customAdapter
+
         // 区切り専用のオブジェクトを生成。
         val decorator = DividerItemDecoration(applicationContext, layout.orientation)
         // RecyclerViewに区切り線オブジェクトを設定
         articleListView.addItemDecoration(decorator)
-
 
         // スクロール対応
         articleListView.addOnScrollListener(object :
