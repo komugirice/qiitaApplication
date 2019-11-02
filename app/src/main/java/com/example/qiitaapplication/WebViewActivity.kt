@@ -11,10 +11,9 @@ class WebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
 
-        val myWebView = findViewById<WebView>(R.id.webView);
-        myWebView.setWebViewClient(WebViewClient());
+        val myWebView = findViewById<WebView>(R.id.webView)
+        myWebView.setWebViewClient(WebViewClient())
         val url = intent.getStringExtra("url")
-        myWebView.loadUrl(url);
-
+        myWebView.loadUrl(url)
     }
 }
