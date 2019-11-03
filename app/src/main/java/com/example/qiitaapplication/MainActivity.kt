@@ -18,8 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
-
-
+import java.util.*
 
 
 /**
@@ -184,8 +183,8 @@ class MainActivity : AppCompatActivity() {
             holder.likes_count.text = data.likes_count.toString()   // お気に入り数
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             val requiredFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val getDate = existingUTCFormat.parse(data.created_at);
-            val dateStr = requiredFormat.format(getDate)
+            val getDate = existingUTCFormat.parse(data.created_at)
+            val dateStr = requiredFormat.format(getDate ?: Date())
             holder.created_at.text = dateStr   // 作成日
             //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 

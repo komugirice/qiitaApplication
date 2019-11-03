@@ -12,11 +12,11 @@ import java.util.*
 
 class WebViewActivity : AppCompatActivity() {
 
-    val mRealm = Realm.getDefaultInstance()
+    lateinit var mRealm: Realm
     //var isClickedButton_favorite = false
-    //var favorite : Favorite? = null
-    val favorite: Favorite? by lazy { read(URL) }
-    val URL = intent.getStringExtra("url")
+    private val URL by lazy {  intent.getStringExtra("url") }
+    lateinit var favorite: Favorite
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +32,7 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initialize() {
         Realm.init(this)
+        mRealm = Realm.getDefaultInstance()
         initData()
         initLayout()
     }
@@ -41,8 +42,8 @@ class WebViewActivity : AppCompatActivity() {
      *
      */
     private fun initData() {
-        // realmからセレクト
-        //favorite = read(URL)
+        // realmからselect
+        favorite = read(URL) ?:Favorite()
     }
 
     /**
@@ -50,8 +51,20 @@ class WebViewActivity : AppCompatActivity() {
      *
      */
     private fun initLayout() {
+        initFavoriteButton()
         initClick()
         initWebView()
+    }
+
+    /**
+     * initFavoriteButtonメソッド
+     *
+     */
+    private fun initFavoriteButton() {
+        // Favorite判定
+        if (!favorite.url.isEmpty()) {
+            button_favorite.setBackgroundColor(Color.GRAY)
+        }
     }
 
     /**
@@ -61,15 +74,21 @@ class WebViewActivity : AppCompatActivity() {
     private fun initClick() {
         button_favorite.setOnClickListener {
             // Favorite判定
-            if (favorite == null) {
+            if (favorite.url.isEmpty()) {
                 //realmにCreate
                 create(URL)
                 button_favorite.setBackgroundColor(Color.GRAY)
+                favorite.url = URL
             } else {
                 // realmにupdate
-                val del_flg = if (favorite!!.del_flg == "0") "1" else "0"
+                val del_flg = if (favorite.del_flg == "0") "1" else "0"
                 update(URL, del_flg)
-                button_favorite.setBackgroundResource(android.R.drawable.btn_default);
+                favorite.del_flg = del_flg
+                if (favorite.del_flg == "0") {
+                    button_favorite.setBackgroundResource(android.R.drawable.btn_default);
+                } else {
+                    button_favorite.setBackgroundColor(Color.GRAY)
+                }
             }
         }
     }
@@ -103,7 +122,7 @@ class WebViewActivity : AppCompatActivity() {
     fun update(url: String, del_flg: String) {
         mRealm.executeTransaction {
             var favorite = mRealm.where(Favorite::class.java).equalTo("url", url).findFirst()
-            favorite!!.del_flg = del_flg
+            favorite?.del_flg = del_flg
         }
     }
 
