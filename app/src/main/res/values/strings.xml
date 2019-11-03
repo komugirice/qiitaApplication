@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">qiitaApplication</string>
-    <string name="title_article_list">Qiita記事一覧</string>
+    <string name="title_article_activity">Qiita記事一覧</string>
     <string name="label_user_name">ユーザ名：</string>
     <string name="label_likes_count">お気に入り数：</string>
     <string name="label_created_at">作成日：</string>
     <string name="button_favorite">お気に入り</string>
     <string name="button_show_all_record">保存レコードのログを出す</string>
+    <string name="title_favorite_activity">お気に入り一覧</string>
+    <string name="button_favorite_activity">お気に入り一覧</string>
 </resources>

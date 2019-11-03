@@ -159,8 +159,12 @@ class MainActivity : AppCompatActivity() {
                     val position = holder.adapterPosition // positionを取得
                     // クリック時の処理
                     val url = items[position].url
+                    val id = items[position].id
+                    val title = items[position].title
                     val intent = Intent(applicationContext, WebViewActivity::class.java)
                     intent.putExtra("url", url)
+                    intent.putExtra("id", id)
+                    intent.putExtra("title", title)
                     startActivity(intent)
                 }
             })

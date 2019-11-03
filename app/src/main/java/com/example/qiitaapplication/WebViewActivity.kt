@@ -7,7 +7,6 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_web_view.*
-import java.util.*
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -15,6 +14,8 @@ class WebViewActivity : AppCompatActivity() {
     lateinit var mRealm: Realm
     //var isClickedButton_favorite = false
     private val URL by lazy {  intent.getStringExtra("url") }
+    private val TITLE by lazy {  intent.getStringExtra("title") }
+    private val QiitaResponseID by lazy {  intent.getStringExtra("id") }
     lateinit var favorite: Favorite
 
 
@@ -43,7 +44,7 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initData() {
         // realmからselect
-        favorite = read(URL) ?:Favorite()
+        favorite = read(QiitaResponseID) ?:Favorite()
     }
 
     /**
@@ -62,7 +63,7 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initFavoriteButton() {
         // Favorite判定
-        if (!favorite.url.isEmpty()) {
+        if (!favorite.id.isEmpty()) {
             button_favorite.setBackgroundColor(Color.GRAY)
         }
     }
@@ -73,22 +74,19 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initClick() {
         button_favorite.setOnClickListener {
-            // Favorite判定
-            if (favorite.url.isEmpty()) {
+            // お気に入り未登録の場合
+            if (favorite.id.isEmpty() || favorite.del_flg == "1") {
                 //realmにCreate
-                create(URL)
+                insertOrUpdate(QiitaResponseID, URL, "0")
                 button_favorite.setBackgroundColor(Color.GRAY)
+                favorite.id = QiitaResponseID
                 favorite.url = URL
+                favorite.del_flg = "0"
             } else {
                 // realmにupdate
-                val del_flg = if (favorite.del_flg == "0") "1" else "0"
-                update(URL, del_flg)
-                favorite.del_flg = del_flg
-                if (favorite.del_flg == "0") {
-                    button_favorite.setBackgroundResource(android.R.drawable.btn_default);
-                } else {
-                    button_favorite.setBackgroundColor(Color.GRAY)
-                }
+                insertOrUpdate(QiitaResponseID, URL, "1")
+                favorite.del_flg = "1"
+                button_favorite.setBackgroundResource(android.R.drawable.btn_default);
             }
         }
         showAllRecordButton.setOnClickListener {
@@ -112,25 +110,18 @@ class WebViewActivity : AppCompatActivity() {
         mRealm.close()
     }
 
-    fun create(url: String) {
-        mRealm.executeTransaction {
-            var favorite = mRealm.createObject(Favorite::class.java, UUID.randomUUID().toString())
-            favorite.url = url
-            favorite.del_flg = "0"
-
-            mRealm.copyToRealm(favorite)
+    fun insertOrUpdate(id: String, url: String, del_flg: String) {
+        mRealm.executeTransaction {realm ->
+            realm.insertOrUpdate(favorite.apply {
+                this.id = if(this.id.isEmpty()) id else this.id
+                this.url = if(this.url.isEmpty()) url else this.url
+                this.del_flg = del_flg
+            })
         }
     }
 
-    fun update(url: String, del_flg: String) {
-        mRealm.executeTransaction {
-            var favorite = mRealm.where(Favorite::class.java).equalTo("url", url).findFirst()
-            favorite?.del_flg = del_flg
-        }
-    }
-
-    fun read(url: String): Favorite? {
-        return mRealm.where(Favorite::class.java).equalTo("url", url).equalTo("del_flg", "0")
+    fun read(id: String): Favorite? {
+        return mRealm.where(Favorite::class.java).equalTo("id", id).equalTo("del_flg", "0")
             .findFirst()
     }
 }
