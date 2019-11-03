@@ -1,11 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
-
 apply plugin: 'realm-android'
 
 android {
@@ -45,5 +41,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
     implementation 'io.realm:android-adapters:3.1.0'
-
 }

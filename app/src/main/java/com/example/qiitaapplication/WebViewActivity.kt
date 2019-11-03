@@ -91,6 +91,9 @@ class WebViewActivity : AppCompatActivity() {
                 }
             }
         }
+        showAllRecordButton.setOnClickListener {
+            Favorite.showAll()
+        }
     }
 
     /**
