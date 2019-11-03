@@ -1,3 +1,5 @@
+package com.example.qiitaapplication
+
 import com.google.gson.annotations.SerializedName
 
 /*
