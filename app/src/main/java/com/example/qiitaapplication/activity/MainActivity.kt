@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.example.qiitaapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.R
+import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*

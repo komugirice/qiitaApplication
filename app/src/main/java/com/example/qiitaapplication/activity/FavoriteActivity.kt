@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.example.qiitaapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,15 +9,25 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.qiitaapplication.R
+import com.example.qiitaapplication.dataclass.Favorite
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
 class FavoriteActivity : AppCompatActivity() {
 
+    /** RecyclerListAdapter */
     private val customAdapter by lazy { RecyclerListAdapter() }
+    /** Realmインスタンス */
     lateinit var mRealm: Realm
+    /** お気に入りリスト */
     lateinit var favoriteList : List<Favorite>
 
+    /**
+     * onCreateメソッド
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite)
@@ -32,9 +42,18 @@ class FavoriteActivity : AppCompatActivity() {
     private fun initialize() {
         Realm.init(this)
         mRealm = Realm.getDefaultInstance()
+
+
+    }
+
+    /**
+     * onResumeメソッド
+     *
+     */
+    override fun onResume() {
+        super.onResume()
         initData()
         initLayout()
-
     }
 
     /**
@@ -46,6 +65,10 @@ class FavoriteActivity : AppCompatActivity() {
         favoriteList = readAll() ?: mutableListOf()
     }
 
+    /**
+     * readAllメソッド
+     *
+     */
     fun readAll(): List<Favorite>? {
         val results = mRealm.where(Favorite::class.java).equalTo("del_flg", "0")
         .findAll().let { mRealm.copyFromRealm(it)}
@@ -107,7 +130,7 @@ class FavoriteActivity : AppCompatActivity() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerListViewHolder {
             // レイアウトインフレータを取得。
             val inflater = LayoutInflater.from(applicationContext)
-            // row.xmlをインフレートし、1行分の画面部品とする。
+            // row_favoriteをインフレートし、1行分の画面部品とする。
             val view = inflater.inflate(R.layout.row_favorite, parent, false)
             // ビューホルダオブジェクトを生成。
             val holder = RecyclerListViewHolder(view)
@@ -157,21 +180,10 @@ class FavoriteActivity : AppCompatActivity() {
         }
 
 
-        /**
-         * refreshメソッド
-         *
-         * @param list
-         */
-        fun refresh(list: List<QiitaResponse>) {
-            favoriteList.apply {
-                readAll()
-            }
-            notifyDataSetChanged()
-        }
     }
 
     /**
-     * RecyclerListViewHolderクラスs
+     * RecyclerListViewHolderクラス
      *
      * @param itemView
      */
@@ -186,4 +198,6 @@ class FavoriteActivity : AppCompatActivity() {
 
         }
     }
+
+
 }

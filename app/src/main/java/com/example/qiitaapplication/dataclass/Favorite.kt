@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.example.qiitaapplication.dataclass
 
 import android.util.Log
 import io.realm.Realm
