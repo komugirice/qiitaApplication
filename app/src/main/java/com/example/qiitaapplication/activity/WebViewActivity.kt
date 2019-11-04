@@ -1,15 +1,17 @@
 package com.example.qiitaapplication.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.Favorite
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_web_view.*
+
+
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -76,33 +78,33 @@ class WebViewActivity : AppCompatActivity() {
     private fun initFavoriteButton() {
         // favorite存在判定
         if (!favorite.id.isEmpty()) {
-            button_favorite.setBackgroundColor(Color.GRAY)
+            val image = findViewById(R.id.ic_favorite) as ImageView
+            image.setImageResource(R.drawable.ic_favorite_red_24dp);
         }
-        // log_favorite()
     }
 
-    fun log_favorite() {
-            Log.d("Favorite", "{$favorite}")
-    }
 
     /**
      * initClickメソッド
      *
      */
     private fun initClick() {
-        // お気に入りボタン
-        button_favorite.setOnClickListener {
+        // お気に入りアイコン
+        ic_favorite.setOnClickListener {
             // お気に入り未登録の場合
             if (favorite.id.isEmpty() || favorite.del_flg == "1") {
                 //realmにinsertOrUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "0")
-                button_favorite.setBackgroundColor(Color.GRAY)
+                // 画像の変更
+                ic_favorite.setImageResource(R.drawable.ic_favorite_red_24dp);
             } else {
                 // realmにUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "1")
-                button_favorite.setBackgroundResource(android.R.drawable.btn_default)
+                // 画像の変更
+                ic_favorite.setImageResource(R.drawable.ic_favorite_border_red_24dp);
             }
         }
+
         // ログ出力ボタン
         showAllRecordButton.setOnClickListener {
             Favorite.showAll()
@@ -156,6 +158,14 @@ class WebViewActivity : AppCompatActivity() {
     fun read(id: String): Favorite? {
         return mRealm.where(Favorite::class.java).equalTo("id", id).equalTo("del_flg", "0")
             .findFirst()
+    }
+
+    /**
+     * ログ出力メソッド
+     *
+     */
+    fun log_favorite() {
+        Log.d("Favorite", "{$favorite}")
     }
 }
 
