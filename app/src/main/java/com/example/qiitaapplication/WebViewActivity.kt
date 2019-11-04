@@ -77,14 +77,15 @@ class WebViewActivity : AppCompatActivity() {
             // お気に入り未登録の場合
             if (favorite.id.isEmpty() || favorite.del_flg == "1") {
                 //realmにCreate
-                insertOrUpdate(QiitaResponseID, URL, "0")
+                insertOrUpdate(QiitaResponseID, URL, TITLE, "0")
                 button_favorite.setBackgroundColor(Color.GRAY)
                 favorite.id = QiitaResponseID
                 favorite.url = URL
+                favorite.title = TITLE
                 favorite.del_flg = "0"
             } else {
                 // realmにupdate
-                insertOrUpdate(QiitaResponseID, URL, "1")
+                insertOrUpdate(QiitaResponseID, URL, TITLE, "1")
                 favorite.del_flg = "1"
                 button_favorite.setBackgroundResource(android.R.drawable.btn_default);
             }
@@ -101,7 +102,6 @@ class WebViewActivity : AppCompatActivity() {
     private fun initWebView() {
         val myWebView = findViewById<WebView>(R.id.webView)
         myWebView.setWebViewClient(WebViewClient())
-        //val url = intent.getStringExtra("url")
         myWebView.loadUrl(URL)
     }
 
@@ -110,11 +110,12 @@ class WebViewActivity : AppCompatActivity() {
         mRealm.close()
     }
 
-    fun insertOrUpdate(id: String, url: String, del_flg: String) {
+    fun insertOrUpdate(id: String, url: String, title: String, del_flg: String) {
         mRealm.executeTransaction {realm ->
             realm.insertOrUpdate(favorite.apply {
                 this.id = if(this.id.isEmpty()) id else this.id
                 this.url = if(this.url.isEmpty()) url else this.url
+                this.title = if(this.title.isEmpty()) title else this.title
                 this.del_flg = del_flg
             })
         }

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -89,11 +88,6 @@ class MainActivity : AppCompatActivity() {
         // RecyclerViewにアダプタオブジェクトを設定。
         articleListView.adapter = customAdapter
 
-        // 区切り専用のオブジェクトを生成。
-        val decorator = DividerItemDecoration(applicationContext, layout.orientation)
-        // RecyclerViewに区切り線オブジェクトを設定
-        articleListView.addItemDecoration(decorator)
-
         // スクロール対応
         articleListView.addOnScrollListener(object :
             EndlessScrollListener(articleListView.getLayoutManager() as LinearLayoutManager) {
@@ -124,6 +118,11 @@ class MainActivity : AppCompatActivity() {
         closeImageView.setOnClickListener {
             finish()
         }
+        button_favorite_activity.setOnClickListener{
+            val intent = Intent(applicationContext, FavoriteActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     /**
@@ -147,8 +146,6 @@ class MainActivity : AppCompatActivity() {
             val inflater = LayoutInflater.from(applicationContext)
             // row.xmlをインフレートし、1行分の画面部品とする。
             val view = inflater.inflate(R.layout.row, parent, false)
-            // インフレートされた1行分画面部品にリスナを設定
-            //view.setOnClickListener(ItemClickListener())
             // ビューホルダオブジェクトを生成。
             val holder = RecyclerListViewHolder(view)
 

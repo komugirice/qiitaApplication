@@ -5,11 +5,11 @@ import io.realm.Realm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.Required
-import java.util.*
 
 open class Favorite (
-    @PrimaryKey open var id : String = UUID.randomUUID().toString(),
+    @PrimaryKey open var id : String = "",
     @Required open var url : String = "",
+    @Required open var title : String = "",
     open var del_flg : String = "0"
 ) : RealmObject() {
 
@@ -17,6 +17,7 @@ open class Favorite (
         StringBuilder()
             .append("id:$id")
             .append(", url:$url")
+            .append(", title:$title")
             .append(", del_flg:$del_flg")
             .toString()
 
