@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.fragment.ArticleFragment
+import com.example.qiitaapplication.fragment.FavoriteFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             when(position) {
                 0 -> return ArticleFragment()
+                1 -> return FavoriteFragment()
                 else -> return ArticleFragment()
             }
         }

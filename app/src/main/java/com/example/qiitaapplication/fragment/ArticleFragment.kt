@@ -18,7 +18,6 @@ import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_main_bk.swipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_article.*
 import okhttp3.*
 import java.io.IOException
