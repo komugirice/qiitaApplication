@@ -78,8 +78,8 @@ class WebViewActivity : AppCompatActivity() {
     private fun initFavoriteButton() {
         // favorite存在判定
         if (!favorite.id.isEmpty()) {
-            val image = findViewById(R.id.ic_favorite) as ImageView
-            image.setImageResource(R.drawable.ic_favorite_red_24dp);
+            val image = findViewById<ImageView>(R.id.ic_favorite)
+            image.setImageResource(R.drawable.ic_favorite_red_24dp)
         }
     }
 
@@ -96,12 +96,12 @@ class WebViewActivity : AppCompatActivity() {
                 //realmにinsertOrUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "0")
                 // 画像の変更
-                ic_favorite.setImageResource(R.drawable.ic_favorite_red_24dp);
+                ic_favorite.setImageResource(R.drawable.ic_favorite_red_24dp)
             } else {
                 // realmにUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "1")
                 // 画像の変更
-                ic_favorite.setImageResource(R.drawable.ic_favorite_border_red_24dp);
+                ic_favorite.setImageResource(R.drawable.ic_favorite_border_red_24dp)
             }
         }
 
@@ -117,7 +117,7 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initWebView() {
         val myWebView = findViewById<WebView>(R.id.webView)
-        myWebView.setWebViewClient(WebViewClient())
+        myWebView.webViewClient = WebViewClient()
         myWebView.loadUrl(URL)
     }
 
