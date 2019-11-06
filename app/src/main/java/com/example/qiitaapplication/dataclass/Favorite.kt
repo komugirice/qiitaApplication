@@ -10,7 +10,7 @@ open class Favorite (
     @PrimaryKey open var id : String = "",
     @Required open var url : String = "",
     @Required open var title : String = "",
-    open var del_flg : String = "0"
+    open var delFlg : String = "0"
 ) : RealmObject() {
 
     override fun toString(): String =
@@ -18,7 +18,7 @@ open class Favorite (
             .append("id:$id")
             .append(", url:$url")
             .append(", title:$title")
-            .append(", del_flg:$del_flg")
+            .append(", delFlg:$delFlg")
             .toString()
 
     companion object {

@@ -70,7 +70,7 @@ class FavoriteActivity : AppCompatActivity() {
      *
      */
     fun readAll(): List<Favorite>? {
-        val results = mRealm.where(Favorite::class.java).equalTo("del_flg", "0")
+        val results = mRealm.where(Favorite::class.java).equalTo("delFlg", "0")
         .findAll().let { mRealm.copyFromRealm(it)}
         return  results
     }

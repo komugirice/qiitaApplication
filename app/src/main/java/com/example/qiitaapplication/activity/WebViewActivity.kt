@@ -78,8 +78,8 @@ class WebViewActivity : AppCompatActivity() {
     private fun initFavoriteButton() {
         // favorite存在判定
         if (!favorite.id.isEmpty()) {
-            val image = findViewById(R.id.ic_favorite) as ImageView
-            image.setImageResource(R.drawable.ic_favorite_red_24dp);
+            val image = findViewById(R.id.icFavorite) as ImageView
+            image.setImageResource(R.drawable.ic_favorite_red_24dp)
         }
     }
 
@@ -90,18 +90,18 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initClick() {
         // お気に入りアイコン
-        ic_favorite.setOnClickListener {
+        icFavorite.setOnClickListener {
             // お気に入り未登録の場合
-            if (favorite.id.isEmpty() || favorite.del_flg == "1") {
+            if (favorite.id.isEmpty() || favorite.delFlg == "1") {
                 //realmにinsertOrUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "0")
                 // 画像の変更
-                ic_favorite.setImageResource(R.drawable.ic_favorite_red_24dp);
+                icFavorite.setImageResource(R.drawable.ic_favorite_red_24dp)
             } else {
                 // realmにUpdate
                 insertOrUpdate(QiitaResponseID, URL, TITLE, "1")
                 // 画像の変更
-                ic_favorite.setImageResource(R.drawable.ic_favorite_border_red_24dp);
+                icFavorite.setImageResource(R.drawable.ic_favorite_border_red_24dp)
             }
         }
 
@@ -136,16 +136,16 @@ class WebViewActivity : AppCompatActivity() {
      * @param id: String
      * @param url: String
      * @param title: String
-     * @param del_flg: String
+     * @param delFlg: String
      *
      */
-    fun insertOrUpdate(id: String, url: String, title: String, del_flg: String) {
+    fun insertOrUpdate(id: String, url: String, title: String, delFlg: String) {
         mRealm.executeTransaction {realm ->
             realm.insertOrUpdate(favorite.apply {
                 if(this.id.isEmpty()) this.id = id
                 this.url = if(this.url.isEmpty()) url else this.url
                 this.title = if(this.title.isEmpty()) title else this.title
-                this.del_flg = del_flg
+                this.delFlg = delFlg
             })
         }
     }
@@ -156,7 +156,7 @@ class WebViewActivity : AppCompatActivity() {
      * @param id: String
      */
     fun read(id: String): Favorite? {
-        return mRealm.where(Favorite::class.java).equalTo("id", id).equalTo("del_flg", "0")
+        return mRealm.where(Favorite::class.java).equalTo("id", id).equalTo("delFlg", "0")
             .findFirst()
     }
 
