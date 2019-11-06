@@ -175,13 +175,14 @@ class ArticleFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerListViewHolder, position: Int) {
             val data = items[position]
             holder.articleTitle.text = data.title   // タイトル
-            holder.userName.text = data.user.name   // ユーザ名
-            holder.likes_count.text = data.likes_count.toString()   // お気に入り数
+            holder.userName.text = if(data.user.name?.isEmpty()) "名無し" else data.user.name   // ユーザ名
+            holder.likesCount.text = data.likes_count.toString()   // お気に入り数
+            holder.commentCount.text = data.comments_count.toString()   // お気に入り数
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            val requiredFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val requiredFormat = SimpleDateFormat("yyyy/MM/dd")
             val getDate = existingUTCFormat.parse(data.created_at)
             val dateStr = requiredFormat.format(getDate ?: Date())
-            holder.created_at.text = dateStr   // 作成日
+            holder.createdAt.text = dateStr   // 作成日
             //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 
         }
@@ -220,16 +221,18 @@ class ArticleFragment : Fragment() {
         // リスト1行分中でメニュー名を表示する画面部品
         var articleTitle: TextView
         var userName: TextView
-        var likes_count: TextView
-        var created_at: TextView
+        var likesCount: TextView
+        var createdAt: TextView
+        var commentCount: TextView
 
 
         init {
             // 引数で渡されたリスト1行分の画面部品中から表示に使われるTextViewを取得。
             articleTitle = itemView.findViewById(R.id.articleTitle)
             userName = itemView.findViewById(R.id.userName)
-            likes_count = itemView.findViewById(R.id.likesCount)
-            created_at = itemView.findViewById(R.id.createdAt)
+            likesCount = itemView.findViewById(R.id.likesCount)
+            createdAt = itemView.findViewById(R.id.createdAt)
+            commentCount = itemView.findViewById(R.id.commentCount)
 
         }
     }
