@@ -1,6 +1,5 @@
-package com.example.qiitaapplication
+package com.example.qiitaapplication.activity
 
-import QiitaResponse
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.R
+import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
-
-
+import java.util.*
 
 
 /**
@@ -91,11 +91,6 @@ class MainActivity : AppCompatActivity() {
         // RecyclerViewにアダプタオブジェクトを設定。
         articleListView.adapter = customAdapter
 
-        // 区切り専用のオブジェクトを生成。
-        val decorator = DividerItemDecoration(applicationContext, layout.orientation)
-        // RecyclerViewに区切り線オブジェクトを設定
-        articleListView.addItemDecoration(decorator)
-
         // スクロール対応
         articleListView.addOnScrollListener(object :
             EndlessScrollListener(articleListView.getLayoutManager() as LinearLayoutManager) {
@@ -126,6 +121,11 @@ class MainActivity : AppCompatActivity() {
         closeImageView.setOnClickListener {
             finish()
         }
+        button_favorite_activity.setOnClickListener{
+            val intent = Intent(applicationContext, FavoriteActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     /**
@@ -149,8 +149,6 @@ class MainActivity : AppCompatActivity() {
             val inflater = LayoutInflater.from(applicationContext)
             // row.xmlをインフレートし、1行分の画面部品とする。
             val view = inflater.inflate(R.layout.row, parent, false)
-            // インフレートされた1行分画面部品にリスナを設定
-            //view.setOnClickListener(ItemClickListener())
             // ビューホルダオブジェクトを生成。
             val holder = RecyclerListViewHolder(view)
 
@@ -161,8 +159,12 @@ class MainActivity : AppCompatActivity() {
                     val position = holder.adapterPosition // positionを取得
                     // クリック時の処理
                     val url = items[position].url
+                    val id = items[position].id
+                    val title = items[position].title
                     val intent = Intent(applicationContext, WebViewActivity::class.java)
                     intent.putExtra("url", url)
+                    intent.putExtra("id", id)
+                    intent.putExtra("title", title)
                     startActivity(intent)
                 }
             })
@@ -185,8 +187,8 @@ class MainActivity : AppCompatActivity() {
             holder.likes_count.text = data.likes_count.toString()   // お気に入り数
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             val requiredFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val getDate = existingUTCFormat.parse(data.created_at);
-            val dateStr = requiredFormat.format(getDate)
+            val getDate = existingUTCFormat.parse(data.created_at)
+            val dateStr = requiredFormat.format(getDate ?: Date())
             holder.created_at.text = dateStr   // 作成日
             //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 
