@@ -23,7 +23,7 @@
 
 
     <TextView
-        android:id="@+id/label_userName"
+        android:id="@+id/userNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -41,11 +41,11 @@
         android:layout_weight="1"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/label_userName"
+        app:layout_constraintStart_toEndOf="@+id/userNameLabel"
         app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
 
     <TextView
-        android:id="@+id/label_likes_count"
+        android:id="@+id/likesCountLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -53,22 +53,22 @@
         android:text="@string/label_likes_count"
         android:textColor="@color/colorBlack"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_userName" />
+        app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
 
     <TextView
-        android:id="@+id/likes_count"
+        android:id="@+id/likesCount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/label_likes_count"
+        app:layout_constraintStart_toEndOf="@+id/likesCountLabel"
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
 
     <TextView
-        android:id="@+id/label_created_at"
+        android:id="@+id/createdAtLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -76,18 +76,18 @@
         android:text="@string/label_created_at"
         android:textColor="@color/colorBlack"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_likes_count" />
+        app:layout_constraintTop_toBottomOf="@+id/likesCountLabel" />
 
     <TextView
-        android:id="@+id/created_at"
+        android:id="@+id/createdAt"
         android:layout_width="0dp"
         android:layout_height="23dp"
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
         android:textColor="@color/colorBlack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/label_created_at"
-        app:layout_constraintTop_toBottomOf="@+id/likes_count" />
+        app:layout_constraintStart_toEndOf="@+id/createdAtLabel"
+        app:layout_constraintTop_toBottomOf="@+id/likesCount" />
 
     <View
         android:layout_width="match_parent"
@@ -96,6 +96,6 @@
         android:background="#000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_created_at" />
+        app:layout_constraintTop_toBottomOf="@+id/createdAtLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

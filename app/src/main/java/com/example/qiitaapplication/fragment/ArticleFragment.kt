@@ -228,8 +228,8 @@ class ArticleFragment : Fragment() {
             // 引数で渡されたリスト1行分の画面部品中から表示に使われるTextViewを取得。
             articleTitle = itemView.findViewById(R.id.articleTitle)
             userName = itemView.findViewById(R.id.userName)
-            likes_count = itemView.findViewById(R.id.likes_count)
-            created_at = itemView.findViewById(R.id.created_at)
+            likes_count = itemView.findViewById(R.id.likesCount)
+            created_at = itemView.findViewById(R.id.createdAt)
 
         }
     }
