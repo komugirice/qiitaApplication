@@ -114,18 +114,6 @@
             app:layout_constraintStart_toEndOf="@+id/icThumbUp"
             app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
 
-        <!--
-        <TextView
-            android:id="@+id/commentCountLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:text="@string/label_comment_count"
-            android:textColor="@color/colorBlack"
-            app:layout_constraintStart_toEndOf="@+id/likesCount"
-            app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
-        -->
 
         <ImageView
             android:id="@+id/icComment"
