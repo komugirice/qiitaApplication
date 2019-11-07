@@ -1,6 +1,8 @@
 package com.example.qiitaapplication.activity
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -42,19 +44,47 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun initLayout() {
-        initClick()
+        initToolbar()
         initViewPager()
         initTabLayout()
     }
 
     /**
-     * initClickメソッド
+     * initToolbarメソッド
      *
      */
-    private fun initClick() {
-        closeImageView.setOnClickListener {
-            finish()
+    private fun initToolbar() {
+        // アクションバーにツールバーを設定
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+    /**
+     * onCreateOptionsMenuメソッド
+     *
+     * @param menu
+     */
+    override fun onCreateOptionsMenu(menu: Menu) : Boolean {
+        // オプションメニュー用xmlファイルをインフレイト
+        menuInflater.inflate(R.menu.menu_options_menu_list, menu)
+        // 親クラスの同名メソッドを呼び出し、その戻り値を返却
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    /**
+     * onOptionsItemSelectedメソッド
+     *
+     * @param item
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when(item.itemId) {
+            // 終了
+            R.id.menuListOptionsFinish -> finish()
         }
+
+        return super.onOptionsItemSelected(item)
+
     }
 
     private fun initViewPager() {

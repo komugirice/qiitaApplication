@@ -180,7 +180,7 @@ class ArticleFragment : Fragment() {
             Picasso.get().load(data.user.profile_image_url).into(holder.profileImage);
 
             holder.articleTitle.text = data.title   // タイトル
-            holder.userName.text = if(data.user.name?.isEmpty()) "名無し" else data.user.name   // ユーザ名
+            holder.userName.text = if(data.user.name.isEmpty()) "名無し" else data.user.name.trim()   // ユーザ名
             holder.likesCount.text = data.likes_count.toString()   // お気に入り数
             holder.commentCount.text = data.comments_count.toString()   // お気に入り数
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")

@@ -6,38 +6,31 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/headerView"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorQiita"
+        android:elevation="0dp"
+        android:stateListAnimator="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/titleList"
+            android:id="@+id/toolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             android:textSize="15sp"
-            android:text="@string/title_article_activity"
+            android:text="@string/title_toolbar"
+            android:layout_gravity="center_horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:padding="16dp"
-            android:id="@+id/closeImageView"
-            android:src="@drawable/ic_close_black_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
 
 
     <com.google.android.material.tabs.TabLayout
@@ -47,7 +40,7 @@
         app:tabBackground="@color/colorQiita"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerView"/>
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
 
     <androidx.viewpager.widget.ViewPager
