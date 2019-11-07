@@ -5,134 +5,162 @@
     android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/userName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:textColor="@color/colorBlack"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/userNameLabel"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ConstraintLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/label_user_name"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/userName"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/createdAt"
-        android:layout_width="0dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/userNameLabel"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/createdAtLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/label_created_at"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/createdAt"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/articleTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:textColor="@color/colorTitleBlue"
-        android:textSize="18sp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/userNameLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="@string/label_user_name"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintStart_toEndOf="@+id/userName"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/createdAt"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintStart_toEndOf="@+id/userNameLabel"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/createdAtLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="@string/label_created_at"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintStart_toEndOf="@+id/createdAt"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
-        android:id="@+id/icThumbUp"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_thumb_up_black_24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+        <TextView
+            android:id="@+id/articleTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:textColor="@color/colorTitleBlue"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userName" />
 
-    <TextView
-        android:id="@+id/likesCount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/icThumbUp"
-        app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
 
-    <!--
-    <TextView
-        android:id="@+id/commentCountLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:text="@string/label_comment_count"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/likesCount"
-        app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
-    -->
+        <ImageView
+            android:id="@+id/icThumbUp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_thumb_up_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
 
-    <ImageView
-        android:id="@+id/icComment"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_comment_black_24dp"
-        app:layout_constraintStart_toEndOf="@+id/likesCount"
-        app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+        <TextView
+            android:id="@+id/likesCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
+            app:layout_constraintStart_toEndOf="@+id/icThumbUp"
+            app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
 
-    <TextView
-        android:id="@+id/commentCount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toEndOf="@+id/icComment"
-        app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+        <!--
+        <TextView
+            android:id="@+id/commentCountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/label_comment_count"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintStart_toEndOf="@+id/likesCount"
+            app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+        -->
+
+        <ImageView
+            android:id="@+id/icComment"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_comment_black_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
+            app:layout_constraintStart_toEndOf="@+id/likesCount"
+            app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
+
+        <TextView
+            android:id="@+id/commentCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
+            app:layout_constraintStart_toEndOf="@+id/icComment"
+            app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
+        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="#000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/likesCount" />
+        app:layout_constraintTop_toBottomOf="@+id/ConstraintLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

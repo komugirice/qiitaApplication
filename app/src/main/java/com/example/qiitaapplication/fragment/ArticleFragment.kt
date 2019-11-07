@@ -7,22 +7,24 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qiitaapplication.EndlessScrollListener
-import com.example.qiitaapplication.R
 import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_article.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * A simple [Fragment] subclass.
@@ -41,7 +43,7 @@ class ArticleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_article, container, false)
+        return inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -140,7 +142,7 @@ class ArticleFragment : Fragment() {
             // レイアウトインフレータを取得。
             val inflater = LayoutInflater.from(context)
             // row.xmlをインフレートし、1行分の画面部品とする。
-            val view = inflater.inflate(R.layout.row, parent, false)
+            val view = inflater.inflate(com.example.qiitaapplication.R.layout.row, parent, false)
             // ビューホルダオブジェクトを生成。
             val holder = RecyclerListViewHolder(view)
 
@@ -174,6 +176,9 @@ class ArticleFragment : Fragment() {
          */
         override fun onBindViewHolder(holder: RecyclerListViewHolder, position: Int) {
             val data = items[position]
+            // プロフィール画像
+            Picasso.get().load(data.user.profile_image_url).into(holder.profileImage);
+
             holder.articleTitle.text = data.title   // タイトル
             holder.userName.text = if(data.user.name?.isEmpty()) "名無し" else data.user.name   // ユーザ名
             holder.likesCount.text = data.likes_count.toString()   // お気に入り数
@@ -219,6 +224,7 @@ class ArticleFragment : Fragment() {
      */
     private inner class RecyclerListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // リスト1行分中でメニュー名を表示する画面部品
+        var profileImage: ImageView
         var articleTitle: TextView
         var userName: TextView
         var likesCount: TextView
@@ -228,11 +234,12 @@ class ArticleFragment : Fragment() {
 
         init {
             // 引数で渡されたリスト1行分の画面部品中から表示に使われるTextViewを取得。
-            articleTitle = itemView.findViewById(R.id.articleTitle)
-            userName = itemView.findViewById(R.id.userName)
-            likesCount = itemView.findViewById(R.id.likesCount)
-            createdAt = itemView.findViewById(R.id.createdAt)
-            commentCount = itemView.findViewById(R.id.commentCount)
+            profileImage = itemView.findViewById(com.example.qiitaapplication.R.id.profileImage)
+            articleTitle = itemView.findViewById(com.example.qiitaapplication.R.id.articleTitle)
+            userName = itemView.findViewById(com.example.qiitaapplication.R.id.userName)
+            likesCount = itemView.findViewById(com.example.qiitaapplication.R.id.likesCount)
+            createdAt = itemView.findViewById(com.example.qiitaapplication.R.id.createdAt)
+            commentCount = itemView.findViewById(com.example.qiitaapplication.R.id.commentCount)
 
         }
     }
