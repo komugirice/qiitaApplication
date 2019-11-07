@@ -2,6 +2,7 @@ package com.example.qiitaapplication.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
@@ -10,8 +11,6 @@ import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.Favorite
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_web_view.*
-
-
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -66,16 +65,44 @@ class WebViewActivity : AppCompatActivity() {
      *
      */
     private fun initLayout() {
-        initFavoriteButton()
+        initToolbar()
+        initFavoriteIcon()
         initClick()
         initWebView()
     }
 
     /**
-     * initFavoriteButtonメソッド
+     * initToolbarメソッド
      *
      */
-    private fun initFavoriteButton() {
+    private fun initToolbar() {
+        // アクションバーにツールバーを設定
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    /**
+     * onOptionsItemSelectedメソッド
+     *
+     * @param item
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        // 戻るボタン押下時
+        if (item.itemId == android.R.id.home) {
+             finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+
+    }
+
+    /**
+     * initFavoriteIconメソッド
+     *
+     */
+    private fun initFavoriteIcon() {
         // favorite存在判定
         if (!favorite.id.isEmpty()) {
             val image = findViewById(R.id.icFavorite) as ImageView
