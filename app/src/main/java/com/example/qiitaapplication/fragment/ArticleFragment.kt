@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.row.view.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -30,6 +31,8 @@ import java.util.*
  * A simple [Fragment] subclass.
  */
 class ArticleFragment : Fragment() {
+
+    val SEARCH_TAG = 1
 
     private val handler = Handler()
     /** RecyclerListAdapter */
@@ -120,7 +123,6 @@ class ArticleFragment : Fragment() {
      *
      */
     private fun initClick() {
-
     }
 
     /**
@@ -164,6 +166,18 @@ class ArticleFragment : Fragment() {
                 }
             })
 
+            // タグのクリックリスナ
+            view.articleTag.setOnClickListener {
+
+                val position = holder.adapterPosition // positionを取得
+                // SearchActivityに遷移
+                val intent = Intent(context, SearchActivity::class.java)
+                // TODO 押下したタグごとに取得する必要がある
+                intent.putExtra("query", items[position].tags[0].name)
+                intent.putExtra("searchType", SEARCH_TAG)
+                startActivity(intent)
+            }
+
             // 生成したビューホルダをリターン。
             return holder
         }
@@ -184,6 +198,7 @@ class ArticleFragment : Fragment() {
             holder.userName.text = if(data.user.name.isEmpty()) "Non-Name" else data.user.name.trim()   // ユーザ名
             holder.likesCount.text = data.likes_count.toString()   // お気に入り数
             holder.commentCount.text = data.comments_count.toString()   // お気に入り数
+            holder.tag.text = data.tags[0].name.toString()
 
             // 作成日
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -245,6 +260,7 @@ class ArticleFragment : Fragment() {
         var likesCount: TextView
         var createdAt: TextView
         var commentCount: TextView
+        var tag: TextView
 
 
         init {
@@ -255,6 +271,7 @@ class ArticleFragment : Fragment() {
             likesCount = itemView.findViewById(com.example.qiitaapplication.R.id.likesCount)
             createdAt = itemView.findViewById(com.example.qiitaapplication.R.id.createdAt)
             commentCount = itemView.findViewById(com.example.qiitaapplication.R.id.commentCount)
+            tag = itemView.findViewById(com.example.qiitaapplication.R.id.articleTag)
 
         }
     }

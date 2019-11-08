@@ -25,12 +25,16 @@ import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_web_view.toolbar
 import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
+import kotlinx.android.synthetic.main.row.view.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class SearchActivity : AppCompatActivity() {
+
+    val SEARCH_BODY = 0
+    val SEARCH_TAG = 1
 
     /** Realmインスタンス */
     lateinit var mRealm: Realm
@@ -41,8 +45,11 @@ class SearchActivity : AppCompatActivity() {
     /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
+    /** 検索タイプ */
+    // TODO _で警告が発生する
+    private val SEARCH_TYPE by lazy { intent.getIntExtra("searchType", 9) }
     /** 検索クエリ */
-    private val QUERY by lazy {  intent.getStringExtra("query") }
+    private val QUERY by lazy { intent.getStringExtra("query") }
 
     /**
      * onCreateメソッド
@@ -127,7 +134,7 @@ class SearchActivity : AppCompatActivity() {
                 EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
-                    search(current_page, QUERY)
+                    search(SEARCH_TYPE, current_page, QUERY)
                 }
             })
         }
@@ -186,6 +193,18 @@ class SearchActivity : AppCompatActivity() {
                 }
             })
 
+            // タグのクリックリスナ
+            view.articleTag.setOnClickListener {
+
+                val position = holder.adapterPosition // positionを取得
+                // SearchActivityに遷移
+                val intent = Intent(this@SearchActivity, SearchActivity::class.java)
+                // TODO 押下したタグごとに取得する必要がある
+                intent.putExtra("query", items[position].tags[0].name)
+                intent.putExtra("searchType", SEARCH_TAG)
+                startActivity(intent)
+            }
+
             // 生成したビューホルダをリターン。
             return holder
         }
@@ -206,6 +225,7 @@ class SearchActivity : AppCompatActivity() {
             holder.userName.text = if(data.user.name.isEmpty()) "Non-Name" else data.user.name.trim()   // ユーザ名
             holder.likesCount.text = data.likes_count.toString()   // お気に入り数
             holder.commentCount.text = data.comments_count.toString()   // お気に入り数
+            holder.tag.text = data.tags[0].name.toString()
 
             // 作成日
             val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -253,6 +273,7 @@ class SearchActivity : AppCompatActivity() {
         var likesCount: TextView
         var createdAt: TextView
         var commentCount: TextView
+        var tag: TextView
 
 
         init {
@@ -263,6 +284,7 @@ class SearchActivity : AppCompatActivity() {
             likesCount = itemView.findViewById(com.example.qiitaapplication.R.id.likesCount)
             createdAt = itemView.findViewById(com.example.qiitaapplication.R.id.createdAt)
             commentCount = itemView.findViewById(com.example.qiitaapplication.R.id.commentCount)
+            tag = itemView.findViewById(com.example.qiitaapplication.R.id.articleTag)
 
         }
     }
@@ -273,7 +295,7 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun initData() {
         // QiitaAPI実行
-        search(1, QUERY)
+        search(SEARCH_TYPE, 1, QUERY)
     }
 
     /**
@@ -283,11 +305,27 @@ class SearchActivity : AppCompatActivity() {
      * @param query
      *
      */
-    fun search(page: Int, query: String) {
+    fun search(type: Int, page: Int, query: String) {
         val client = OkHttpClient()
-        val request = Request.Builder()
-            .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${query}")
-            .build()
+        val request =
+            when(type) {
+                // 検索バー
+                SEARCH_BODY -> {
+                    Request.Builder()
+                        .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${query}")
+                    .build()
+                }
+                // タグ
+                SEARCH_TAG -> {
+                    Request.Builder()
+                        .url("https://qiita.com/api/v2/tags/${query}/items?page=${page}&per_page=20")
+                        .build()
+                }
+                else -> {
+                    // TODO エラー処理？
+                    return
+                }
+            }
         client.run {
             newCall(request).enqueue(object: Callback {
                 override fun onFailure(call: Call, e: IOException) {

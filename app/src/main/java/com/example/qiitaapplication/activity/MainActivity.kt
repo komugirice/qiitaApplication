@@ -23,6 +23,8 @@ import kotlinx.android.synthetic.main.activity_main.*
  */
 class MainActivity : AppCompatActivity() {
 
+    val SEARCH_BODY = 0
+
     private val customAdapter by lazy { CustomAdapter(supportFragmentManager) }
 
     /**
@@ -93,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                     // SearchActivityに遷移
                     val intent = Intent(this@MainActivity, SearchActivity::class.java)
                     intent.putExtra("query", query)
+                    intent.putExtra("searchType", SEARCH_BODY)
                     startActivity(intent)
 
                     // SearchViewを隠す
