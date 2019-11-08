@@ -1,17 +1,19 @@
 package com.example.qiitaapplication.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.qiitaapplication.R
 import com.example.qiitaapplication.fragment.ArticleFragment
 import com.example.qiitaapplication.fragment.FavoriteFragment
+import com.example.qiitaapplication.fragment.SearchActivity
 import kotlinx.android.synthetic.main.activity_main.*
+
+
 
 
 
@@ -79,12 +81,26 @@ class MainActivity : AppCompatActivity() {
         val searchView = searchItem.getActionView() as SearchView
 
         // SearchViewに何も入力していない時のテキストを設定
-        searchView.setQueryHint(this.getResources().getString(R.string.label_search_title))
+        searchView.setQueryHint(this.getResources().getString(com.example.qiitaapplication.R.string.label_search_title))
 
         // イベントリスナ設定
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            // 検索ボタン押下時
             override fun onQueryTextSubmit(query: String?): Boolean {
-                return false;
+                // 検索バーに入力がある場合
+                if(!query!!.isEmpty()) {
+
+                    // SearchActivityに遷移
+                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
+                    intent.putExtra("query", query)
+                    startActivity(intent)
+
+                    // SearchViewを隠す
+                    searchView.onActionViewCollapsed();
+                    // Focusを外す
+                    searchView.clearFocus();
+                }
+                return  false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -129,15 +145,12 @@ class MainActivity : AppCompatActivity() {
     class CustomAdapter(fragmentManager: FragmentManager) :
         FragmentPagerAdapter(fragmentManager) {
 
+        val fragments = listOf(ArticleFragment(), FavoriteFragment())
+
         override fun getCount(): Int = 2
 
-        override fun getItem(position: Int): Fragment {
-            when(position) {
-                0 -> return ArticleFragment()
-                1 -> return FavoriteFragment()
-                else -> return ArticleFragment()
-            }
-        }
+        override fun getItem(position: Int) = fragments[position]
+
         override fun getPageTitle(position: Int): CharSequence {
             when(position) {
                 0 -> {
@@ -152,6 +165,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 }

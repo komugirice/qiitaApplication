@@ -1,68 +1,69 @@
 package com.example.qiitaapplication.fragment
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.R
 import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_article.*
+import io.realm.Realm
+import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_web_view.toolbar
+import kotlinx.android.synthetic.main.fragment_article.articleListView
+import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+class SearchActivity : AppCompatActivity() {
 
-/**
- * A simple [Fragment] subclass.
- */
-class ArticleFragment : Fragment() {
-
+    /** Realmインスタンス */
+    lateinit var mRealm: Realm
+    /** Handlerインスタンス */
     private val handler = Handler()
     /** RecyclerListAdapter */
     private val customAdapter by lazy { RecyclerListAdapter() }
     /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
+    /** 検索クエリ */
+    private val QUERY by lazy {  intent.getStringExtra("query") }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
-    }
+    /**
+     * onCreateメソッド
+     *
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_search)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initialize()
     }
 
-    private fun initialize() {
-        initLayout()
-        initData()
-    }
-
     /**
-     * initDataメソッド
+     * initializeメソッド
      *
      */
-    private fun initData() {
-        // QiitaAPI実行
-        updateData(1)
+    private fun initialize() {
+        Realm.init(this)
+        mRealm = Realm.getDefaultInstance()
+        initLayout()
+        initData()
     }
 
     /**
@@ -70,9 +71,39 @@ class ArticleFragment : Fragment() {
      *
      */
     private fun initLayout() {
-        initClick()
+        initToolbar()
         initRecyclerView()
         initSwipeRefreshLayout()
+    }
+
+    /**
+     * initToolbarメソッド
+     *
+     */
+    private fun initToolbar() {
+        // アクションバーにツールバーを設定
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // ツールバータイトル設定
+        toolbarTitle.text = QUERY
+    }
+
+    /**
+     * onOptionsItemSelectedメソッド
+     *
+     * @param item
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        // 戻るボタン押下時
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+
     }
 
     /**
@@ -96,7 +127,7 @@ class ArticleFragment : Fragment() {
                 EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
-                    updateData(current_page)
+                    search(current_page, QUERY)
                 }
             })
         }
@@ -112,15 +143,6 @@ class ArticleFragment : Fragment() {
             // 引っ張って離した時に呼ばれます。
             swipeRefreshLayout.isRefreshing = false
         })
-    }
-
-
-    /**
-     * initClickメソッド
-     *
-     */
-    private fun initClick() {
-
     }
 
     /**
@@ -141,7 +163,7 @@ class ArticleFragment : Fragment() {
          */
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerListViewHolder {
             // レイアウトインフレータを取得。
-            val inflater = LayoutInflater.from(context)
+            val inflater = LayoutInflater.from(this@SearchActivity)
             // row.xmlをインフレートし、1行分の画面部品とする。
             val view = inflater.inflate(com.example.qiitaapplication.R.layout.row, parent, false)
             // ビューホルダオブジェクトを生成。
@@ -149,14 +171,14 @@ class ArticleFragment : Fragment() {
 
             // クリックリスナを搭載
             view.setOnClickListener (object : View.OnClickListener{
-                override fun onClick(view:  View) {
+                override fun onClick(view: View) {
 
                     val position = holder.adapterPosition // positionを取得
                     // クリック時の処理
                     val url = items[position].url
                     val id = items[position].id
                     val title = items[position].title
-                    val intent = Intent(context, WebViewActivity::class.java)
+                    val intent = Intent(this@SearchActivity, WebViewActivity::class.java)
                     intent.putExtra("url", url)
                     intent.putExtra("id", id)
                     intent.putExtra("title", title)
@@ -205,20 +227,6 @@ class ArticleFragment : Fragment() {
             return items.size
         }
 
-
-        /**
-         * refreshメソッド
-         *
-         * @param list
-         */
-        fun refresh(list: List<QiitaResponse>) {
-            items.apply {
-                clear()
-                addAll(list)
-            }
-            notifyDataSetChanged()
-        }
-
         /**
          * addItemsメソッド
          *
@@ -260,15 +268,25 @@ class ArticleFragment : Fragment() {
     }
 
     /**
-     * updateData
-     *
-     * @param page
+     * initDataメソッド
      *
      */
-    fun updateData(page: Int) {
+    private fun initData() {
+        // QiitaAPI実行
+        search(1, QUERY)
+    }
+
+    /**
+     * search
+     *
+     * @param page
+     * @param query
+     *
+     */
+    fun search(page: Int, query: String) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://qiita.com/api/v2/items?page=${page}&per_page=20")
+            .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${query}")
             .build()
         client.run {
             newCall(request).enqueue(object: Callback {
@@ -298,5 +316,13 @@ class ArticleFragment : Fragment() {
         }
     }
 
+    /**
+     * onDestroyメソッド
+     *
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        mRealm.close()
+    }
 
 }
