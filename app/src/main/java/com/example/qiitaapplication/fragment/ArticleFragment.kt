@@ -4,6 +4,7 @@ package com.example.qiitaapplication.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -190,6 +191,8 @@ class ArticleFragment : Fragment() {
             val requiredFormat = SimpleDateFormat("yyyy/MM/dd")
             val getDate = existingUTCFormat.parse(data.created_at)
             val dateStr = requiredFormat.format(getDate ?: Date())
+
+            val dateString = DateFormat.format("yyyy/MM/dd", getDate)
             holder.createdAt.text = dateStr
             //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 
@@ -298,5 +301,8 @@ class ArticleFragment : Fragment() {
         }
     }
 
-
+    class QiitaData {
+        lateinit var response : QiitaResponse
+        var isFavorite = false
+    }
 }
