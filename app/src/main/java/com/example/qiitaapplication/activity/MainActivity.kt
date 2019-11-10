@@ -1,13 +1,20 @@
 package com.example.qiitaapplication.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.example.qiitaapplication.extension.toggle
 import com.example.qiitaapplication.fragment.ArticleFragment
 import com.example.qiitaapplication.fragment.FavoriteFragment
 import com.example.qiitaapplication.fragment.SearchActivity
@@ -51,9 +58,40 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun initLayout() {
+        initClick()
+        initEditText()
         initToolbar()
         initViewPager()
         initTabLayout()
+    }
+
+    private fun initClick() {
+        searchImageView.setOnClickListener {
+            changeSearchView(true)
+        }
+        deleteImageView.setOnClickListener {
+            if (searchEditText.text.isEmpty())
+                changeSearchView(false)
+            else
+                searchEditText.setText("")
+        }
+    }
+
+    private fun changeSearchView(isSearch: Boolean) {
+        headerTextView.toggle(!isSearch)
+        searchImageView.toggle(!isSearch)
+        headerSearchView.toggle(isSearch)
+        if (!isSearch)
+            hideKeybord()
+    }
+
+    private fun initEditText() {
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                true
+            }
+            false
+        }
     }
 
 
@@ -138,7 +176,18 @@ class MainActivity : AppCompatActivity() {
         viewPager.apply {
             adapter = customAdapter
             offscreenPageLimit = customAdapter.count
+            addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {}
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+                override fun onPageSelected(position: Int) {
+                    hideKeybord()
+                }
+            })
         }
+    }
+
+    private fun hideKeybord() {
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(searchEditText.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     private fun initTabLayout() {
