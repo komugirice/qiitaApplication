@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.qiitaapplication.fragment.ArticleFragment
 import com.example.qiitaapplication.fragment.FavoriteFragment
-import com.example.qiitaapplication.fragment.SearchActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
