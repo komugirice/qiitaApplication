@@ -20,7 +20,7 @@ import java.util.*
  * ArticleAdapterクラス
  *
  */
-class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<ArticleAdapter.RowViewHolder>() {
+class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<ArticleAdapter.RowViewHolder>() {
     private val SEARCH_TAG = 1
 
     private val items = mutableListOf<QiitaResponse>()
@@ -33,11 +33,11 @@ class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<Articl
      * @return RowViewHolder
      *
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleAdapter.RowViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
         // レイアウトインフレータを取得。
         val inflater = LayoutInflater.from(context)
         // row.xmlをインフレートし、1行分の画面部品とする。
-        val view = inflater.inflate(com.example.qiitaapplication.R.layout.row, parent, false)
+        val view = inflater.inflate(R.layout.row, parent, false)
         // ビューホルダオブジェクトを生成。
         val holder = RowViewHolder(view)
 
@@ -54,7 +54,7 @@ class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<Articl
                 intent.putExtra("url", url)
                 intent.putExtra("id", id)
                 intent.putExtra("title", title)
-                context.startActivity(intent)
+                context?.startActivity(intent)
             }
         })
 
@@ -67,7 +67,7 @@ class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<Articl
             // 押下したタグごとに取得
             intent.putExtra("query", items[position].tags[0].name)
             intent.putExtra("searchType", SEARCH_TAG)
-            context.startActivity(intent)
+            context?.startActivity(intent)
         }
 
         // 生成したビューホルダをリターン。
@@ -81,16 +81,16 @@ class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<Articl
      * @param position
      *
      */
-    override fun onBindViewHolder(holder: ArticleAdapter.RowViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
         // プロフィール画像
-        Picasso.get().load(data.user.profile_image_url).into(holder.profileImage);
+        Picasso.get().load(data.user.profile_image_url).into(holder.profileImage)
 
         holder.articleTitle.text = data.title   // タイトル
         holder.userName.text = if(data.user.name.isEmpty()) "Non-Name" else data.user.name.trim()   // ユーザ名
         holder.likesCount.text = data.likes_count.toString()   // お気に入り数
         holder.commentCount.text = data.comments_count.toString()   // お気に入り数
-        holder.tag.text = data.tags[0].name.toString()
+        holder.tag.text = data.tags[0].name
 
         // 作成日
         val existingUTCFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -145,13 +145,18 @@ class ArticleAdapter(private val context: Context) : RecyclerView.Adapter<Articl
      */
     class RowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // リスト1行分中でメニュー名を表示する画面部品
-        var profileImage = itemView.findViewById(com.example.qiitaapplication.R.id.profileImage) as ImageView
-        var articleTitle = itemView.findViewById(com.example.qiitaapplication.R.id.articleTitle) as TextView
-        var userName = itemView.findViewById(com.example.qiitaapplication.R.id.userName) as  TextView
-        var likesCount = itemView.findViewById(com.example.qiitaapplication.R.id.likesCount) as TextView
-        var createdAt = itemView.findViewById(com.example.qiitaapplication.R.id.createdAt) as TextView
-        var commentCount = itemView.findViewById(com.example.qiitaapplication.R.id.commentCount) as TextView
-        var tag = itemView.findViewById(com.example.qiitaapplication.R.id.articleTag) as TextView
+        var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
+        var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
+        var userName = itemView.findViewById(R.id.userName) as  TextView
+        var likesCount = itemView.findViewById(R.id.likesCount) as TextView
+        var createdAt = itemView.findViewById(R.id.createdAt) as TextView
+        var commentCount = itemView.findViewById(R.id.commentCount) as TextView
+        var tag = itemView.findViewById(R.id.articleTag) as TextView
 
+    }
+
+    class QiitaData {
+        lateinit var response : QiitaResponse
+        var isFavorite = false
     }
 }

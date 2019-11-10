@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
 import com.example.qiitaapplication.dataclass.QiitaResponse
@@ -27,7 +26,7 @@ class ArticleFragment : Fragment() {
 
     private val handler = Handler()
     /** ArticleAdapter */
-    private val customAdapter by lazy { ArticleAdapter(context!!) }
+    private val customAdapter by lazy { ArticleAdapter(context) }
     /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
@@ -102,10 +101,10 @@ class ArticleFragment : Fragment() {
      */
     private fun initSwipeRefreshLayout() {
         // swiprefreshLayout対応
-        swipeRefreshLayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+        swipeRefreshLayout.setOnRefreshListener {
             // 引っ張って離した時に呼ばれます。
             swipeRefreshLayout.isRefreshing = false
-        })
+        }
     }
 
 

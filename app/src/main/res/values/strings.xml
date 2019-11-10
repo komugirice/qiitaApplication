@@ -6,6 +6,8 @@
     <string name="label_created_at">に投稿</string>
     <string name="label_likes_count">いいね：</string>
     <string name="label_comment_count">コメント数：</string>
+    <string name="tab_article">記事一覧</string>
+    <string name="tab_favorite">お気に入り</string>
     <!-- お気に入り画面 -->
     <string name="button_show_all_record">保存レコードのログを出す</string>
 
