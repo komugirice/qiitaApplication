@@ -8,9 +8,11 @@ import android.webkit.WebViewClient
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.qiitaapplication.R
-import com.example.qiitaapplication.dataclass.Favorite
+import com.example.qiitaapplication.dataclass.ArticleRow
+import com.example.qiitaapplication.extension.getDateToString
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_web_view.*
+import java.util.*
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -18,13 +20,13 @@ class WebViewActivity : AppCompatActivity() {
     /** Realmインスタンス */
     lateinit var mRealm: Realm
     /** 記事URL */
-    private val URL by lazy {  intent.getStringExtra("url") }
+    private val mUrl by lazy {  intent.getStringExtra("url") }
     /** 記事タイトル */
-    private val TITLE by lazy {  intent.getStringExtra("title") }
+    private val mTitle by lazy {  intent.getStringExtra("title") }
     /** 記事ID */
-    private val QiitaResponseID by lazy {  intent.getStringExtra("id") }
+    private val mQiitaResponseID by lazy {  intent.getStringExtra("id") }
     /** お気に入りクラス */
-    lateinit var favorite: Favorite
+    lateinit var favorite: ArticleRow
 
 
     /**
@@ -57,7 +59,7 @@ class WebViewActivity : AppCompatActivity() {
      */
     private fun initData() {
         // realmからselect
-        favorite = read(QiitaResponseID) ?: Favorite()
+        favorite = read(mQiitaResponseID) ?: ArticleRow()
     }
 
     /**
@@ -118,15 +120,16 @@ class WebViewActivity : AppCompatActivity() {
     private fun initClick() {
         // お気に入りアイコン
         icFavorite.setOnClickListener {
-            // お気に入り未登録の場合
+            // お気に入り未登録or1度登録したけど削除の場合
             if (favorite.id.isEmpty() || favorite.delFlg == "1") {
                 //realmにinsertOrUpdate
-                insertOrUpdate(QiitaResponseID, URL, TITLE, "0")
+                insertOrUpdate("0")
                 // 画像の変更
                 icFavorite.setImageResource(R.drawable.ic_favorite_red_24dp)
             } else {
+                // 削除
                 // realmにUpdate
-                insertOrUpdate(QiitaResponseID, URL, TITLE, "1")
+                insertOrUpdate("1")
                 // 画像の変更
                 icFavorite.setImageResource(R.drawable.ic_favorite_border_red_24dp)
             }
@@ -134,7 +137,7 @@ class WebViewActivity : AppCompatActivity() {
 
         // ログ出力ボタン
         showAllRecordButton.setOnClickListener {
-            Favorite.showAll()
+            ArticleRow.showAll()
         }
     }
 
@@ -145,7 +148,7 @@ class WebViewActivity : AppCompatActivity() {
     private fun initWebView() {
         val myWebView = findViewById<WebView>(R.id.webView)
         myWebView.webViewClient = WebViewClient()
-        myWebView.loadUrl(URL)
+        myWebView.loadUrl(mUrl)
     }
 
     /**
@@ -166,14 +169,25 @@ class WebViewActivity : AppCompatActivity() {
      * @param delFlg: String
      *
      */
-    fun insertOrUpdate(id: String, url: String, title: String, delFlg: String) {
+    fun insertOrUpdate(delFlg: String) {
         mRealm.executeTransaction {realm ->
-            realm.insertOrUpdate(favorite.apply {
-                if(this.id.isEmpty()) this.id = id
-                this.url = if(this.url.isEmpty()) url else this.url
-                this.title = if(this.title.isEmpty()) title else this.title
-                this.delFlg = delFlg
-            })
+            realm.insertOrUpdate(
+                favorite.apply {
+                    if(id.isEmpty())
+                        id =   mQiitaResponseID
+                    url = if (url.isEmpty()) mUrl else url
+                    title = if (title.isEmpty()) mTitle else title
+                    profileImageUrl = intent.getStringExtra("profileImageUrl")
+                    userName = intent.getStringExtra("userName")
+                    createdAt = intent.getStringExtra("createdAt")
+                    likesCount = intent.getStringExtra("likesCount")
+                    commentCount = intent.getStringExtra("commentCount")
+                    tags = intent.getStringExtra("tags")
+                    updDate = Date().getDateToString()
+                    this.delFlg = delFlg
+
+                }
+            )
         }
     }
 
@@ -182,8 +196,8 @@ class WebViewActivity : AppCompatActivity() {
      *
      * @param id: String
      */
-    fun read(id: String): Favorite? {
-        return mRealm.where(Favorite::class.java).equalTo("id", id).equalTo("delFlg", "0")
+    fun read(id: String): ArticleRow? {
+        return mRealm.where(ArticleRow::class.java).equalTo("id", id).equalTo("delFlg", "0")
             .findFirst()
     }
 

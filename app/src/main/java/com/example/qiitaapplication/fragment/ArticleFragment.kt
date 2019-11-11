@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -144,8 +145,16 @@ class ArticleFragment : Fragment() {
                         response.body?.string()?.also {
                             val gson = Gson()
                             val type = object : TypeToken<List<QiitaResponse>>() {}.type
-                            val list = gson.fromJson<List<QiitaResponse>>(it, type)
-                            customAdapter.addItems(list)
+                            val qiitaList = gson.fromJson<List<QiitaResponse>>(it, type)
+                            // RecyclerViewのAdapter用に変換
+                            var articleRowList : MutableList<ArticleRow>  = mutableListOf()
+                            qiitaList.forEach({
+                                    resp ->
+                                        val row = ArticleRow()
+                                        row.convertFromQiitaResponse(resp)
+                                        articleRowList.add(row)
+                            })
+                            customAdapter.addItems(articleRowList)
                         } ?: run {
                             customAdapter.addItems(mutableListOf())
                         }

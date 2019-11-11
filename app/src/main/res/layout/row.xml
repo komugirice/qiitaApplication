@@ -151,6 +151,29 @@
             app:layout_constraintStart_toEndOf="@+id/icComment"
             app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
 
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/updDateLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_update_date"
+            app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
+            app:layout_constraintStart_toEndOf="@+id/commentCount"
+            app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/updDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
+            app:layout_constraintStart_toEndOf="@+id/updDateLabel"
+            app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

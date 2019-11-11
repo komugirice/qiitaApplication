@@ -4,8 +4,7 @@
     <string name="title_toolbar">Qiita</string>
     <string name="label_user_name">が</string>
     <string name="label_created_at">に投稿</string>
-    <string name="label_likes_count">いいね：</string>
-    <string name="label_comment_count">コメント数：</string>
+    <string name="label_update_date">登録日：</string>
     <string name="tab_article">記事一覧</string>
     <string name="tab_favorite">お気に入り</string>
     <!-- お気に入り画面 -->
