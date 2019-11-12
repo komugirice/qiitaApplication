@@ -186,7 +186,7 @@ class SearchActivity : AppCompatActivity() {
                     handler.post {
                         //hideProgress()
                         swipeRefreshLayout.isRefreshing = false
-                        customAdapter.addItems(mutableListOf())
+                        customAdapter.addItems(mutableListOf(), false)
                     }
                 }
 
@@ -206,9 +206,9 @@ class SearchActivity : AppCompatActivity() {
                                 row.convertFromQiitaResponse(resp)
                                 articleRowList.add(row)
                             })
-                            customAdapter.addItems(articleRowList)
+                            customAdapter.addItems(articleRowList, false)
                         } ?: run {
-                            customAdapter.addItems(mutableListOf())
+                            customAdapter.addItems(mutableListOf(), false)
                         }
                     }
                 }

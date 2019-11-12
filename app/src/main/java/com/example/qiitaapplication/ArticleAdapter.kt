@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.qiitaapplication.activity.SearchActivity
 import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.dataclass.ArticleRow
-import com.example.qiitaapplication.dataclass.QiitaResponse
+import com.example.qiitaapplication.extension.toggle
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row.view.*
 
@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.row.view.*
 class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<ArticleAdapter.RowViewHolder>() {
     private val SEARCH_TAG = 1
 
-    private val items = mutableListOf<ArticleRow>()
+    private val items = mutableListOf<QiitaData>()
 
     /**
      * onCreateViewHolderメソッド
@@ -49,15 +49,15 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
                 // クリック時の処理
                 val bundle = Bundle()
                 bundle.apply {
-                    putString("id", items[position].id)
-                    putString("url", items[position].url)
-                    putString("title", items[position].title)
-                    putString("profileImageUrl", items[position].profileImageUrl)
-                    putString("userName", items[position].userName)
-                    putString("createdAt", items[position].createdAt)
-                    putString("likesCount", items[position].likesCount)
-                    putString("commentCount", items[position].commentCount)
-                    putString("tags", items[position].tags)
+                    putString("id", items[position].row.id)
+                    putString("url", items[position].row.url)
+                    putString("title", items[position].row.title)
+                    putString("profileImageUrl", items[position].row.profileImageUrl)
+                    putString("userName", items[position].row.userName)
+                    putString("createdAt", items[position].row.createdAt)
+                    putString("likesCount", items[position].row.likesCount)
+                    putString("commentCount", items[position].row.commentCount)
+                    putString("tags", items[position].row.tags)
 
                 }
 
@@ -74,7 +74,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
             // SearchActivityに遷移
             val intent = Intent(context, SearchActivity::class.java)
             // TODO 押下したタグごとに取得
-            intent.putExtra("query", items[position].tags.split(",")[0])
+            intent.putExtra("query", items[position].row.tags.split(",")[0])
             intent.putExtra("searchType", SEARCH_TAG)
             context?.startActivity(intent)
         }
@@ -93,16 +93,18 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
     override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
         // プロフィール画像
-        Picasso.get().load(data.profileImageUrl).into(holder.profileImage)
+        Picasso.get().load(data.row.profileImageUrl).into(holder.profileImage)
 
-        holder.articleTitle.text = data.title   // タイトル
-        holder.userName.text = if(data.userName.isEmpty()) "Non-Name" else data.userName.trim()   // ユーザ名
-        holder.likesCount.text = data.likesCount   // お気に入り数
-        holder.commentCount.text = data.commentCount   // お気に入り数
-        holder.tag.text = data.tags.split(",")[0]
-        holder.createdAt.text = data.createdAt
-        holder.updDate.text = data.updDate
-
+        holder.articleTitle.text = data.row.title   // タイトル
+        holder.userName.text = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()   // ユーザ名
+        holder.likesCount.text = data.row.likesCount   // お気に入り数
+        holder.commentCount.text = data.row.commentCount   // お気に入り数
+        holder.tag.text = data.row.tags.split(",")[0]
+        holder.createdAt.text = data.row.createdAt
+        holder.updDate.text = data.row.updDate
+        // 登録日を表示
+        holder.updDateLabel.toggle(data.isFavorite)
+        holder.updDate.toggle(data.isFavorite)
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
 
     }
@@ -123,10 +125,12 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
      *
      * @param list
      */
-    fun refresh(list: List<ArticleRow>) {
+    fun refresh(list: List<ArticleRow>, isFavorite: Boolean) {
+        val qiitaList : MutableList<QiitaData> = mutableListOf()
+        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
         items.apply {
             clear()
-            addAll(list)
+            addAll(qiitaList)
         }
         notifyDataSetChanged()
     }
@@ -136,9 +140,11 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
      *
      * @param list
      */
-    fun addItems(list: List<ArticleRow>) {
+    fun addItems(list: List<ArticleRow>, isFavorite: Boolean) {
+        val qiitaList : MutableList<QiitaData> = mutableListOf()
+        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
         items.apply {
-            addAll(list)
+            addAll(qiitaList)
         }
         notifyDataSetChanged()
     }
@@ -158,11 +164,16 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         var commentCount = itemView.findViewById(R.id.commentCount) as TextView
         var tag = itemView.findViewById(R.id.articleTag) as TextView
         var updDate = itemView.findViewById(R.id.updDate) as TextView
-
+        var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
     }
 
     class QiitaData {
-        lateinit var response : QiitaResponse
+        var row : ArticleRow
         var isFavorite = false
+
+        constructor(row: ArticleRow, isFavorite: Boolean) {
+            this.row = row
+            this.isFavorite = isFavorite
+        }
     }
 }

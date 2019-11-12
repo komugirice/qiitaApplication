@@ -3,12 +3,10 @@ package com.example.qiitaapplication.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -129,48 +127,48 @@ class MainActivity : AppCompatActivity() {
      *
      * @param menu
      */
-    override fun onCreateOptionsMenu(menu: Menu) : Boolean {
-        // オプションメニュー用xmlファイルをインフレイト
-        menuInflater.inflate(com.example.qiitaapplication.R.menu.menu_options_menu_list, menu)
-
-        //=== searchView設定 ===
-        val searchItem = menu.findItem(com.example.qiitaapplication.R.id.searchView) as MenuItem
-        val searchView = searchItem.getActionView() as SearchView
-
-        // SearchViewに何も入力していない時のテキストを設定
-        searchView.setQueryHint(this.getResources().getString(com.example.qiitaapplication.R.string.label_search_title))
-
-        // イベントリスナ設定
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            // 検索ボタン押下時
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // 検索バーに入力がある場合
-                if(!query!!.isEmpty()) {
-
-                    // SearchActivityに遷移
-                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
-                    intent.putExtra("query", query)
-                    intent.putExtra("searchType", SEARCH_BODY)
-                    startActivity(intent)
-
-                    // SearchViewを隠す
-                    searchView.onActionViewCollapsed()
-                    // Focusを外す
-                    searchView.clearFocus()
-                }
-                return  false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-
-        })
+//    override fun onCreateOptionsMenu(menu: Menu) : Boolean {
+//        // オプションメニュー用xmlファイルをインフレイト
+//        menuInflater.inflate(com.example.qiitaapplication.R.menu.menu_options_menu_list, menu)
+//
+//        //=== searchView設定 ===
+//        val searchItem = menu.findItem(com.example.qiitaapplication.R.id.searchView) as MenuItem
+//        val searchView = searchItem.getActionView() as SearchView
+//
+//        // SearchViewに何も入力していない時のテキストを設定
+//        searchView.setQueryHint(this.getResources().getString(com.example.qiitaapplication.R.string.label_search_title))
+//
+//        // イベントリスナ設定
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            // 検索ボタン押下時
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                // 検索バーに入力がある場合
+//                if(!query!!.isEmpty()) {
+//
+//                    // SearchActivityに遷移
+//                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
+//                    intent.putExtra("query", query)
+//                    intent.putExtra("searchType", SEARCH_BODY)
+//                    startActivity(intent)
+//
+//                    // SearchViewを隠す
+//                    searchView.onActionViewCollapsed()
+//                    // Focusを外す
+//                    searchView.clearFocus()
+//                }
+//                return  false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                return true
+//            }
+//
+//        })
 
 
         // 親クラスの同名メソッドを呼び出し、その戻り値を返却
-        return super.onCreateOptionsMenu(menu)
-    }
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     /**
      * onOptionsItemSelectedメソッド

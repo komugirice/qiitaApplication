@@ -10,6 +10,7 @@ import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
 import io.realm.Realm
+import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_favorite.*
 
 /**
@@ -65,7 +66,7 @@ class FavoriteFragment : Fragment() {
     private fun initData() {
         // realmから取得
         favoriteList = readAll() ?: mutableListOf()
-        customAdapter.refresh(favoriteList)
+        customAdapter.refresh(favoriteList, true)
     }
 
     /**
@@ -74,6 +75,7 @@ class FavoriteFragment : Fragment() {
      */
     fun readAll(): List<ArticleRow>? {
         val results = mRealm.where(ArticleRow::class.java).equalTo("delFlg", "0")
+            .sort("updDate", Sort.DESCENDING)
         .findAll().let { mRealm.copyFromRealm(it)}
         return  results
     }
