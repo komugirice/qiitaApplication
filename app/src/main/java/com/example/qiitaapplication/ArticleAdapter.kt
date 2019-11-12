@@ -96,11 +96,14 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         Picasso.get().load(data.row.profileImageUrl).into(holder.profileImage)
 
         holder.articleTitle.text = data.row.title   // タイトル
-        holder.userName.text = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()   // ユーザ名
+        // ユーザ名 + " が" + 登録日 + " に投稿しました"
+        var userInfo = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()
+        userInfo += context?.getString( R.string.label_user_name ) + data.row.createdAt + context?.getString( R.string.label_created_at )
+
+        holder.userInfo.text = userInfo
         holder.likesCount.text = data.row.likesCount   // お気に入り数
         holder.commentCount.text = data.row.commentCount   // お気に入り数
         holder.tag.text = data.row.tags.split(",")[0]
-        holder.createdAt.text = data.row.createdAt
         holder.updDate.text = data.row.updDate
         // 登録日を表示
         holder.updDateLabel.toggle(data.isFavorite)
@@ -158,9 +161,9 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         // リスト1行分中でメニュー名を表示する画面部品
         var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
         var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
-        var userName = itemView.findViewById(R.id.userName) as  TextView
+        var userInfo= itemView.findViewById(R.id.userInfo) as  TextView
         var likesCount = itemView.findViewById(R.id.likesCount) as TextView
-        var createdAt = itemView.findViewById(R.id.createdAt) as TextView
+//        var createdAt = itemView.findViewById(R.id.createdAt) as TextView
         var commentCount = itemView.findViewById(R.id.commentCount) as TextView
         var tag = itemView.findViewById(R.id.articleTag) as TextView
         var updDate = itemView.findViewById(R.id.updDate) as TextView

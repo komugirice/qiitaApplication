@@ -2,8 +2,8 @@
     <string name="app_name">qiitaApplication</string>
     <!-- 記事画面 -->
     <string name="title_toolbar">Qiita</string>
-    <string name="label_user_name">が</string>
-    <string name="label_created_at">に投稿</string>
+    <string name="label_user_name">" が "</string>
+    <string name="label_created_at">" に投稿"</string>
     <string name="label_update_date">登録日：</string>
     <string name="tab_article">記事一覧</string>
     <string name="tab_favorite">お気に入り</string>
