@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/title_toolbar"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -91,6 +91,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerView"
+        app:tabTextColor="@android:color/white"
         app:tabBackground="@color/colorQiita" />
 
 
