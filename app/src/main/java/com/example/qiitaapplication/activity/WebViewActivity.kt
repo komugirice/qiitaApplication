@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
@@ -67,6 +68,10 @@ class WebViewActivity : AppCompatActivity() {
      *
      */
     private fun initLayout() {
+        // タイトル
+        val title = this.findViewById(R.id.title) as TextView
+        title.text  = mTitle
+
         initToolbar()
         initFavoriteIcon()
         initClick()

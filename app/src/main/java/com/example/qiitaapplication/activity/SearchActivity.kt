@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
 import okhttp3.*
 import java.io.IOException
+import java.net.URLEncoder
 
 class SearchActivity : AppCompatActivity() {
 
@@ -161,19 +162,21 @@ class SearchActivity : AppCompatActivity() {
      *
      */
     fun search(type: Int, page: Int, query: String) {
+        // QUERYのエンコード
+        val encordQuery = URLEncoder.encode(query, "UTF-8");
         val client = OkHttpClient()
         val request =
             when(type) {
                 // 検索バー
                 SEARCH_BODY -> {
                     Request.Builder()
-                        .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${query}")
+                        .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${encordQuery}")
                     .build()
                 }
                 // タグ
                 SEARCH_TAG -> {
                     Request.Builder()
-                        .url("https://qiita.com/api/v2/tags/${query}/items?page=${page}&per_page=20")
+                        .url("https://qiita.com/api/v2/tags/${encordQuery}/items?page=${page}&per_page=20")
                         .build()
                 }
                 else -> {
