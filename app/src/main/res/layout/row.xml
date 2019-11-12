@@ -88,11 +88,28 @@
             android:ellipsize="end"
             android:textColor="@color/colorTitleBlue"
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userInfo" />
 
-
+<!--
+        <com.cunoraz.tagview.TagView
+            xmlns:tagview="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tagGroup"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            tagview:lineMargin="5dp"
+            tagview:tagMargin="5dp"
+            tagview:textPaddingLeft="8dp"
+            tagview:textPaddingTop="8dp"
+            tagview:textPaddingRight="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+-->
         <TextView
             android:id="@+id/articleTag"
             android:layout_width="wrap_content"

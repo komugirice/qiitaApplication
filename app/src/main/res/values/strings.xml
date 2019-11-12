@@ -14,4 +14,5 @@
     <string name="menu_list_options_finish">終了</string>
     <!-- 検索メニュー -->
     <string name="label_search_title">投稿検索</string>
+    <string name="search_count_zero">検索結果が0件です</string>
 </resources>

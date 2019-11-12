@@ -161,11 +161,12 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         // リスト1行分中でメニュー名を表示する画面部品
         var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
         var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
-        var userInfo= itemView.findViewById(R.id.userInfo) as  TextView
+        var userInfo = itemView.findViewById(R.id.userInfo) as  TextView
+//        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
+        var tag = itemView.findViewById(R.id.articleTag) as TextView
         var likesCount = itemView.findViewById(R.id.likesCount) as TextView
 //        var createdAt = itemView.findViewById(R.id.createdAt) as TextView
         var commentCount = itemView.findViewById(R.id.commentCount) as TextView
-        var tag = itemView.findViewById(R.id.articleTag) as TextView
         var updDate = itemView.findViewById(R.id.updDate) as TextView
         var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
     }

@@ -11,6 +11,7 @@ import com.example.qiitaapplication.EndlessScrollListener
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.dataclass.QiitaResponse
+import com.example.qiitaapplication.extension.toggle
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.realm.Realm
@@ -195,18 +196,28 @@ class SearchActivity : AppCompatActivity() {
                         //hideProgress()
                         swipeRefreshLayout.isRefreshing = false
                         response.body?.string()?.also {
+                            // json取得
                             val gson = Gson()
                             val type = object : TypeToken<List<QiitaResponse>>() {}.type
                             val qiitaList = gson.fromJson<List<QiitaResponse>>(it, type)
-                            // RecyclerViewのAdapter用に変換
-                            var articleRowList : MutableList<ArticleRow>  = mutableListOf()
-                            qiitaList.forEach({
-                                    resp ->
+
+                            // RecyclerViewのAdapter用のMutableList<ArticleRow>に変換
+                            var articleRowList: MutableList<ArticleRow> = mutableListOf()
+                            qiitaList.forEach({ resp ->
                                 val row = ArticleRow()
                                 row.convertFromQiitaResponse(resp)
                                 articleRowList.add(row)
                             })
                             customAdapter.addItems(articleRowList, false)
+
+                            if(!qiitaList.isEmpty()) {
+                                // 取得結果あり
+                                textSearchZero.toggle(false)
+                            } else {
+                                // 取得結果0件
+                                textSearchZero.toggle(true)
+                            }
+
                         } ?: run {
                             customAdapter.addItems(mutableListOf(), false)
                         }
