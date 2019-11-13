@@ -3,7 +3,6 @@ package com.example.qiitaapplication.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity() {
 //            else
 //                searchEditText.setText("")
 
+            // ワンタッチで閉じる
             searchEditText.setText("")
             changeSearchView(false)
         }
@@ -176,16 +176,16 @@ class MainActivity : AppCompatActivity() {
      *
      * @param item
      */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        when(item.itemId) {
-            // 終了
-            com.example.qiitaapplication.R.id.menuListOptionsFinish -> finish()
-        }
-
-        return super.onOptionsItemSelected(item)
-
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//
+//        when(item.itemId) {
+//            // 終了
+//            com.example.qiitaapplication.R.id.menuListOptionsFinish -> finish()
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//
+//    }
 
     private fun initViewPager() {
         viewPager.apply {
@@ -213,6 +213,11 @@ class MainActivity : AppCompatActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
+    /**
+     * CustomAdapterクラス
+     * TabView用
+     *
+     */
     class CustomAdapter(private val context: Context, fragmentManager: FragmentManager) :
         FragmentPagerAdapter(fragmentManager) {
 

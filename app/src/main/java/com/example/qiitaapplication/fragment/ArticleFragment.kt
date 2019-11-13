@@ -103,8 +103,11 @@ class ArticleFragment : Fragment() {
     private fun initSwipeRefreshLayout() {
         // swiprefreshLayout対応
         swipeRefreshLayout.setOnRefreshListener {
-            // 引っ張って離した時に呼ばれます。
-            swipeRefreshLayout.isRefreshing = false
+            // 上にスワイプした時に呼ばれます。
+            swipeRefreshLayout.isRefreshing = true
+            // TODO EndlessScrollのバグ修正が必要
+            customAdapter.clear()
+            updateData(1)
         }
     }
 

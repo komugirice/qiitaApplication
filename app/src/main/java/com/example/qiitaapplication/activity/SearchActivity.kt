@@ -32,6 +32,7 @@ class SearchActivity : AppCompatActivity() {
     lateinit var mRealm: Realm
     /** Handlerインスタンス */
     private val handler = Handler()
+
     /** RecyclerListAdapter */
     private val customAdapter by lazy { ArticleAdapter(this) }
     /** Qiita記事リスト */
@@ -139,8 +140,11 @@ class SearchActivity : AppCompatActivity() {
     private fun initSwipeRefreshLayout() {
         // swiprefreshLayout対応
         swipeRefreshLayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
-            // 引っ張って離した時に呼ばれます。
-            swipeRefreshLayout.isRefreshing = false
+            // 上にスワイプした時に呼ばれます。
+            swipeRefreshLayout.isRefreshing = true
+            // TODO EndlessScrollのバグ修正が必要
+            customAdapter.clear()
+            search(SEARCH_TYPE, 1, QUERY)
         })
     }
 

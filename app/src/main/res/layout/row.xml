@@ -41,42 +41,7 @@
             android:textColor="@color/colorBlack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-<!--
-        <TextView
-            android:id="@+id/userNameLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="@string/label_user_name"
-            android:textColor="@color/colorBlack"
-            app:layout_constraintStart_toEndOf="@+id/userName"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/createdAt"
-            android:layout_width="0dp"
-            android:layout_height="23dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:textColor="@color/colorBlack"
-            app:layout_constraintStart_toEndOf="@+id/userNameLabel"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/createdAtLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:text="@string/label_created_at"
-            android:textColor="@color/colorBlack"
-            app:layout_constraintStart_toEndOf="@+id/createdAt"
-            app:layout_constraintTop_toTopOf="parent" />
--->
 
         <TextView
             android:id="@+id/articleTitle"
@@ -92,35 +57,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userInfo" />
 
-<!--
+
         <com.cunoraz.tagview.TagView
             xmlns:tagview="http://schemas.android.com/apk/res-auto"
             android:id="@+id/tagGroup"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            tagview:lineMargin="5dp"
-            tagview:tagMargin="5dp"
-            tagview:textPaddingLeft="8dp"
-            tagview:textPaddingTop="8dp"
-            tagview:textPaddingRight="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
--->
-        <TextView
-            android:id="@+id/articleTag"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_label_gray_24dp"
-            android:clickable="true"
-            android:textSize="10sp"
+            android:layout_marginEnd="16dp"
+            app:textPaddingTop="1dp"
+            app:textPaddingBottom="1dp"
+            app:lineMargin="5dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+
+
+        <!--
+            <TextView
+                android:id="@+id/articleTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_label_gray_24dp"
+                android:clickable="true"
+                android:textSize="10sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/articleTitle" />
+        -->
 
         <ImageView
             android:id="@+id/icThumbUp"
@@ -131,7 +97,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_thumb_up_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/articleTag" />
+            app:layout_constraintTop_toBottomOf="@+id/tagGroup" />
 
         <TextView
             android:id="@+id/likesCount"

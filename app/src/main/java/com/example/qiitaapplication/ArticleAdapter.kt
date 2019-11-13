@@ -2,6 +2,7 @@ package com.example.qiitaapplication
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.cunoraz.tagview.Tag
+import com.cunoraz.tagview.TagView
 import com.example.qiitaapplication.activity.SearchActivity
 import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.extension.toggle
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row.view.*
+
 
 /**
  * ArticleAdapterクラス
@@ -68,15 +72,17 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         })
 
         // タグのクリックリスナ
-        view.articleTag.setOnClickListener {
+        view.tagGroup.setOnTagClickListener { tag, position ->
 
-            val position = holder.adapterPosition // positionを取得
+            // 押下したタグごとに遷移
+            val itemsPos = holder.adapterPosition // positionを取得
             // SearchActivityに遷移
             val intent = Intent(context, SearchActivity::class.java)
-            // TODO 押下したタグごとに取得
-            intent.putExtra("query", items[position].row.tags.split(",")[0])
+            intent.putExtra("query", tag.text)
             intent.putExtra("searchType", SEARCH_TAG)
             context?.startActivity(intent)
+
+
         }
 
         // 生成したビューホルダをリターン。
@@ -85,6 +91,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
 
     /**
      * onBindViewHolderメソッド
+     * ViewHolderへデータをバインドする
      *
      * @param holder
      * @param position
@@ -94,18 +101,34 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         val data = items[position]
         // プロフィール画像
         Picasso.get().load(data.row.profileImageUrl).into(holder.profileImage)
-
-        holder.articleTitle.text = data.row.title   // タイトル
+        // タイトル
+        holder.articleTitle.text = data.row.title
         // ユーザ名 + " が" + 登録日 + " に投稿しました"
         var userInfo = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()
         userInfo += context?.getString( R.string.label_user_name ) + data.row.createdAt + context?.getString( R.string.label_created_at )
-
         holder.userInfo.text = userInfo
-        holder.likesCount.text = data.row.likesCount   // お気に入り数
-        holder.commentCount.text = data.row.commentCount   // お気に入り数
-        holder.tag.text = data.row.tags.split(",")[0]
+        // いいね数
+        holder.likesCount.text = data.row.likesCount
+        // コメント数
+        holder.commentCount.text = data.row.commentCount
+        // 登録日（お気に入り画面で使用）
         holder.updDate.text = data.row.updDate
-        // 登録日を表示
+
+        // タググループ 5個まで
+        var tagList: MutableList<Tag> = mutableListOf()
+        var tagStrList = data.row.tags.split(",")
+        tagStrList = if(tagStrList.size >= 5 ) tagStrList.slice(0..4) else tagStrList
+        tagStrList.forEach {
+            // 色：黒、テキストサイズ：10、背景画像：ic_label_gray_24dp
+            val tag: Tag = Tag(it)
+            tag.tagTextColor = Color.BLACK
+            tag.tagTextSize = 10.0f
+            tag.background = context?.getDrawable(R.drawable.ic_label_gray_24dp)
+            tagList.add(tag)
+        }
+        holder.tagGroup.addTags(tagList)
+
+        // 登録日の表示切り替え
         holder.updDateLabel.toggle(data.isFavorite)
         holder.updDate.toggle(data.isFavorite)
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
@@ -153,7 +176,19 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
     }
 
     /**
+     * clearメソッド
+     *
+     */
+    fun clear() {
+        items.apply {
+            clear()
+        }
+        notifyDataSetChanged()
+    }
+
+    /**
      * RowViewHolderクラス
+     * 画面の表示データを設定する
      *
      * @param itemView
      */
@@ -162,15 +197,18 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
         var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
         var userInfo = itemView.findViewById(R.id.userInfo) as  TextView
-//        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
-        var tag = itemView.findViewById(R.id.articleTag) as TextView
+        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
         var likesCount = itemView.findViewById(R.id.likesCount) as TextView
-//        var createdAt = itemView.findViewById(R.id.createdAt) as TextView
         var commentCount = itemView.findViewById(R.id.commentCount) as TextView
         var updDate = itemView.findViewById(R.id.updDate) as TextView
         var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
     }
 
+    /**
+     * QiitaDataクラス
+     * お気に入りから取得とそうでないものを区別する為に使う
+     *
+     */
     class QiitaData {
         var row : ArticleRow
         var isFavorite = false
