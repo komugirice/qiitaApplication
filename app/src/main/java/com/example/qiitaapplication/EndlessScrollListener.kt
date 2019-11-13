@@ -34,6 +34,7 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
         super.onScrolled(recyclerView, dx, dy)
 
         visibleItemCount = recyclerView.childCount
+        // 取得件数
         totalItemCount = mLinearLayoutManager.itemCount
         firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition()
 
@@ -44,6 +45,7 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
             }
         }
 
+        // 取得件数が上回る場合だけ実行する
         if (scrollOnItemCount <= totalItemCount) {
             if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
                 current_page++
@@ -62,4 +64,16 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
      *
      */
     abstract fun onLoadMore(current_page: Int)
+
+    /**
+     * resetメソッド
+     *
+     */
+    fun reset() {
+        current_page = 1
+        previousTotal = 0
+        totalItemCount = 0
+        loading = true
+    }
+
 }

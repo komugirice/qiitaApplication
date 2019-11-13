@@ -116,8 +116,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
 
         // タググループ 5個まで
         var tagList: MutableList<Tag> = mutableListOf()
-        var tagStrList = data.row.tags.split(",")
-        tagStrList = if(tagStrList.size >= 5 ) tagStrList.slice(0..4) else tagStrList
+        val tagStrList = data.row.tags.split(",").withIndex().map { if(it.index <= 4) it.value else "" }.filterNot { it.isEmpty() }
         tagStrList.forEach {
             // 色：黒、テキストサイズ：10、背景画像：ic_label_gray_24dp
             val tag: Tag = Tag(it)

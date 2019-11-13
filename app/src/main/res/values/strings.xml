@@ -15,4 +15,5 @@
     <!-- 検索メニュー -->
     <string name="label_search_title">投稿検索</string>
     <string name="search_count_zero">検索結果が0件です</string>
+    <string name="error_network">APIの実行に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
 </resources>

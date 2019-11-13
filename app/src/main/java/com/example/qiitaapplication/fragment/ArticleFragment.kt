@@ -28,6 +28,8 @@ class ArticleFragment : Fragment() {
     private val handler = Handler()
     /** ArticleAdapter */
     private val customAdapter by lazy { ArticleAdapter(context) }
+    /** EndlessScrollListenerインスタンス */
+    private lateinit var mEndlessScrollListener: EndlessScrollListener
     /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
@@ -85,14 +87,16 @@ class ArticleFragment : Fragment() {
             // コンテンツの大きさが変わらないとき、trueを設定するとパフォーマンスが向上する
             setHasFixedSize(true)
 
-            // スクロール対応
-            articleListView.addOnScrollListener(object :
-                EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
+            // EndlessScrollListenerのインスタンス化
+            mEndlessScrollListener = object:EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
+                    // API実行
                     updateData(current_page)
                 }
-            })
+            }
+            // RecyclerViewスクロール対応
+            articleListView.addOnScrollListener(mEndlessScrollListener)
         }
     }
 
@@ -105,8 +109,10 @@ class ArticleFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             // 上にスワイプした時に呼ばれます。
             swipeRefreshLayout.isRefreshing = true
-            // TODO EndlessScrollのバグ修正が必要
             customAdapter.clear()
+            // ndlessScrollのバグ修正
+            mEndlessScrollListener.reset()
+
             updateData(1)
         }
     }
