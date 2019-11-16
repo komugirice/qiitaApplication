@@ -1,5 +1,7 @@
 package com.example.qiitaapplication.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
@@ -25,9 +27,6 @@ import java.net.URLEncoder
 
 class SearchActivity : AppCompatActivity() {
 
-    val SEARCH_BODY = 0
-    val SEARCH_TAG = 1
-
     /** Realmインスタンス */
     lateinit var mRealm: Realm
     /** Handlerインスタンス */
@@ -40,9 +39,9 @@ class SearchActivity : AppCompatActivity() {
 
     /** 検索タイプ */
     // TODO _で警告が発生する
-    private val SEARCH_TYPE by lazy { intent.getIntExtra("searchType", 9) }
+    private val SEARCH_TYPE by lazy { if (intent.getBooleanExtra(KEY_IS_SEARCH_BY_TAG, false)) SEARCH_TAG else SEARCH_BODY }
     /** 検索クエリ */
-    private val QUERY by lazy { intent.getStringExtra("query") }
+    private val QUERY by lazy { intent.getStringExtra(KEY_SEARCH_WORD) }
 
     /**
      * onCreateメソッド
@@ -242,5 +241,18 @@ class SearchActivity : AppCompatActivity() {
         super.onDestroy()
         mRealm.close()
     }
+    companion object { // comapnion object はstaticです
+        private const val SEARCH_BODY = 0
+        private const val SEARCH_TAG = 1
 
+        private const val KEY_SEARCH_WORD = "key_search_word"
+        private const val KEY_IS_SEARCH_BY_TAG = "key_is_search_by_tag"
+
+        fun start(activity: Activity, searchWord: String, isSearchByTag: Boolean) =
+            activity.startActivity(
+                Intent(activity, SearchActivity::class.java)
+                    .putExtra(KEY_SEARCH_WORD, searchWord)
+                    .putExtra(KEY_IS_SEARCH_BY_TAG, isSearchByTag)
+            )
+    }
 }

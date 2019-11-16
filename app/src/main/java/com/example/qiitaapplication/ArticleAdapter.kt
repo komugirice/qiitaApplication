@@ -1,5 +1,6 @@
 package com.example.qiitaapplication
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.row.view.*
  * ArticleAdapterクラス
  *
  */
-class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<ArticleAdapter.RowViewHolder>() {
+class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val SEARCH_TAG = 1
 
     private val items = mutableListOf<QiitaData>()
@@ -37,56 +38,63 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
      * @return RowViewHolder
      *
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
-        // レイアウトインフレータを取得。
-        val inflater = LayoutInflater.from(context)
-        // row.xmlをインフレートし、1行分の画面部品とする。
-        val view = inflater.inflate(R.layout.row, parent, false)
-        // ビューホルダオブジェクトを生成。
-        val holder = RowViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        // クリックリスナを搭載
-        view.setOnClickListener (object : View.OnClickListener{
-            override fun onClick(view: View) {
+        if (viewType == VIEW_TYPE_ITEM) {
+            // レイアウトインフレータを取得。
+            val inflater = LayoutInflater.from(context)
+            // row.xmlをインフレートし、1行分の画面部品とする。
+            val view = inflater.inflate(R.layout.row, parent, false)
+            // ビューホルダオブジェクトを生成。
+            val holder = RowViewHolder(view)
 
-                val position = holder.adapterPosition // positionを取得
-                // クリック時の処理
-                val bundle = Bundle()
-                bundle.apply {
-                    putString("id", items[position].row.id)
-                    putString("url", items[position].row.url)
-                    putString("title", items[position].row.title)
-                    putString("profileImageUrl", items[position].row.profileImageUrl)
-                    putString("userName", items[position].row.userName)
-                    putString("createdAt", items[position].row.createdAt)
-                    putString("likesCount", items[position].row.likesCount)
-                    putString("commentCount", items[position].row.commentCount)
-                    putString("tags", items[position].row.tags)
+            // クリックリスナを搭載
+            view.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(view: View) {
 
+                    val position = holder.adapterPosition // positionを取得
+                    // クリック時の処理
+                    val bundle = Bundle()
+                    bundle.apply {
+                        putString("id", items[position].row.id)
+                        putString("url", items[position].row.url)
+                        putString("title", items[position].row.title)
+                        putString("profileImageUrl", items[position].row.profileImageUrl)
+                        putString("userName", items[position].row.userName)
+                        putString("createdAt", items[position].row.createdAt)
+                        putString("likesCount", items[position].row.likesCount)
+                        putString("commentCount", items[position].row.commentCount)
+                        putString("tags", items[position].row.tags)
+
+                    }
+
+                    val intent = Intent(context, WebViewActivity::class.java)
+                    intent.putExtras(bundle)
+                    context?.startActivity(intent)
+                }
+            })
+
+            // タグのクリックリスナ
+            view.tagGroup.setOnTagClickListener { tag, position ->
+
+                // 押下したタグごとに遷移
+                val itemsPos = holder.adapterPosition // positionを取得
+                // SearchActivityに遷移
+//            val intent = Intent(context, SearchActivity::class.java)
+//            intent.putExtra("query", tag.text)
+//            intent.putExtra("searchType", SEARCH_TAG)
+//            context?.startActivity(intent)
+                (context as? Activity)?.also {
+                    SearchActivity.start(it, tag.text, true)
                 }
 
-                val intent = Intent(context, WebViewActivity::class.java)
-                intent.putExtras(bundle)
-                context?.startActivity(intent)
             }
-        })
 
-        // タグのクリックリスナ
-        view.tagGroup.setOnTagClickListener { tag, position ->
-
-            // 押下したタグごとに遷移
-            val itemsPos = holder.adapterPosition // positionを取得
-            // SearchActivityに遷移
-            val intent = Intent(context, SearchActivity::class.java)
-            intent.putExtra("query", tag.text)
-            intent.putExtra("searchType", SEARCH_TAG)
-            context?.startActivity(intent)
-
-
+            // 生成したビューホルダをリターン。
+            return holder
+        } else {
+            return EmptyViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_row, parent, false))
         }
-
-        // 生成したビューホルダをリターン。
-        return holder
     }
 
     /**
@@ -97,7 +105,12 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
      * @param position
      *
      */
-    override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is RowViewHolder)
+            onBindViewHolder(holder, position)
+    }
+
+    private fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
         // プロフィール画像
         Picasso.get().load(data.row.profileImageUrl).into(holder.profileImage)
@@ -131,7 +144,6 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         holder.updDateLabel.toggle(data.isFavorite)
         holder.updDate.toggle(data.isFavorite)
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
-
     }
 
     /**
@@ -141,9 +153,12 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
      */
     override fun getItemCount(): Int {
         // リストデータ中の件数をリターン。
-        return items.size
+        return if (items.isEmpty()) 1 else items.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (items.isEmpty()) VIEW_TYPE_EMPTY else VIEW_TYPE_ITEM
+    }
 
     /**
      * refreshメソッド
@@ -203,6 +218,8 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
         var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
     }
 
+    class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
     /**
      * QiitaDataクラス
      * お気に入りから取得とそうでないものを区別する為に使う
@@ -216,5 +233,10 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Artic
             this.row = row
             this.isFavorite = isFavorite
         }
+    }
+
+    companion object {
+        private const val VIEW_TYPE_EMPTY = 0
+        private const val VIEW_TYPE_ITEM = 1
     }
 }
