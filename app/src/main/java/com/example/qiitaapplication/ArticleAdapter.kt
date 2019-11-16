@@ -30,6 +30,8 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
 
     private val items = mutableListOf<QiitaData>()
 
+    private var hasCompletedFirstRefresh = false
+
     /**
      * onCreateViewHolderメソッド
      *
@@ -153,7 +155,12 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
      */
     override fun getItemCount(): Int {
         // リストデータ中の件数をリターン。
-        return if (items.isEmpty()) 1 else items.size
+        return if (items.isEmpty()) {
+            if (hasCompletedFirstRefresh)
+                1
+            else
+                0
+        } else items.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -166,6 +173,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
      * @param list
      */
     fun refresh(list: List<ArticleRow>, isFavorite: Boolean) {
+        hasCompletedFirstRefresh = true
         val qiitaList : MutableList<QiitaData> = mutableListOf()
         list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
         items.apply {

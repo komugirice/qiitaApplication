@@ -5,9 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
 import com.example.qiitaapplication.R
@@ -194,6 +196,10 @@ class SearchActivity : AppCompatActivity() {
                         //hideProgress()
                         swipeRefreshLayout.isRefreshing = false
                         customAdapter.addItems(mutableListOf(), false)
+                        showErrorDialog()
+//                        // TODO:Error時の処理
+//                        Toast.makeText(this@SearchActivity, "エラーです。もどります。", Toast.LENGTH_SHORT).show()
+//                        finish()
                     }
                 }
 
@@ -230,6 +236,18 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
             })
+        }
+    }
+
+    private fun showErrorDialog() {
+        MaterialDialog(this)
+            .title(text = "Errorです")
+            .message(text = "もう一度やり直してください")
+            .show {
+            positiveButton(text = "リトライ", click = {
+                search(SEARCH_TYPE, 1, QUERY)
+            })
+            negativeButton(text = "キャンセル")
         }
     }
 
