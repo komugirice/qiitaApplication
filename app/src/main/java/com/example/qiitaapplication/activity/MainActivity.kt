@@ -3,6 +3,7 @@ package com.example.qiitaapplication.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -38,8 +39,66 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.qiitaapplication.R.layout.activity_main)
-
+//        test()
         initialize()
+    }
+
+    open class User {
+        var name = ""
+    }
+
+    class AdminUser: User() {
+
+    }
+
+    private fun test() { // alsoとleの使い方
+        var noNullText : String? = "aaa"
+        var nullText : String? = null
+
+        Log.d("TEST", "①-----")
+
+        noNullText?.also {
+            Log.d("TEST", "also noNullText:$it")
+        } ?: run {
+            Log.d("TEST", "also noNullText is null")
+        }
+
+        nullText?.also {
+            Log.d("TEST", "also nullText:$it")
+        } ?: run {
+            Log.d("TEST", "also nullText is null")
+        }
+
+        Log.d("TEST", "②-----")
+
+        noNullText?.let {
+            Log.d("TEST", "let noNullText:$it")
+        } ?: run {
+            Log.d("TEST", "let noNullText is null")
+        }
+
+        nullText?.let {
+            Log.d("TEST", "let nullText:$it")
+        } ?: run {
+            Log.d("TEST", "let nullText is null")
+        }
+
+        Log.d("TEST", "③-----")
+
+
+        noNullText?.also {
+            Log.d("TEST", "also noNullText:$it")
+            null
+        } ?: run {
+            Log.d("TEST", "also noNullText is null")
+        }
+
+        noNullText?.let {
+            Log.d("TEST", "let noNullText:$it")
+            null
+        } ?: run {
+            Log.d("TEST", "let noNullText is null")
+        }
     }
 
     /**
@@ -95,13 +154,15 @@ class MainActivity : AppCompatActivity() {
         searchEditText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // EditTextに値がある場合
-                if(!textView.text.toString().isEmpty()) {
+                if(textView.text.toString().isNotEmpty()) {
                     // SearchActivityに遷移
-                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
-                    intent.putExtra("query", textView.text.toString())
-                    intent.putExtra("searchType", SEARCH_BODY)
-                    // SearchActivityに遷移
-                    startActivity(intent)
+//                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
+//                    intent.putExtra("query", textView.text.toString())
+//                    intent.putExtra("searchType", SEARCH_BODY)
+//                    // SearchActivityに遷移
+//                    startActivity(intent)
+
+                    SearchActivity.start(this, textView.text.toString(), false)
                 }
                 //true
             }
