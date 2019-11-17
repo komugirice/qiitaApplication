@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -15,7 +14,6 @@ import com.example.qiitaapplication.EndlessScrollListener
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.dataclass.QiitaResponse
-import com.example.qiitaapplication.extension.toggle
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.realm.Realm
@@ -35,15 +33,14 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler()
 
     /** RecyclerListAdapter */
-    private val customAdapter by lazy { ArticleAdapter(this) }
+    private val customAdapter by lazy { ArticleAdapter(this, false) }
     /** Qiita記事リスト */
     private val items = mutableListOf<QiitaResponse>()
 
     /** 検索タイプ */
-    // TODO _で警告が発生する
-    private val SEARCH_TYPE by lazy { if (intent.getBooleanExtra(KEY_IS_SEARCH_BY_TAG, false)) SEARCH_TAG else SEARCH_BODY }
+    private val searchType by lazy { if (intent.getBooleanExtra(KEY_IS_SEARCH_BY_TAG, false)) SEARCH_TAG else SEARCH_BODY }
     /** 検索クエリ */
-    private val QUERY by lazy { intent.getStringExtra(KEY_SEARCH_WORD) }
+    private val searchQuery by lazy { intent.getStringExtra(KEY_SEARCH_WORD) }
 
     /**
      * onCreateメソッド
@@ -88,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // ツールバータイトル設定
-        toolbarTitle.text = QUERY
+        toolbarTitle.text = searchQuery
     }
 
     /**
@@ -128,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
                 EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
-                    search(SEARCH_TYPE, current_page, QUERY)
+                    search(searchType, current_page, searchQuery)
                 }
             })
         }
@@ -143,9 +140,8 @@ class SearchActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             // 上にスワイプした時に呼ばれます。
             swipeRefreshLayout.isRefreshing = true
-            // TODO EndlessScrollのバグ修正が必要
             customAdapter.clear()
-            search(SEARCH_TYPE, 1, QUERY)
+            search(searchType, 1, searchQuery)
         })
     }
 
@@ -156,7 +152,7 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun initData() {
         // QiitaAPI実行
-        search(SEARCH_TYPE, 1, QUERY)
+        search(searchType, 1, searchQuery)
     }
 
     /**
@@ -167,7 +163,7 @@ class SearchActivity : AppCompatActivity() {
      *
      */
     fun search(type: Int, page: Int, query: String) {
-        // QUERYのエンコード
+        // searchQueryのエンコード
         val encordQuery = URLEncoder.encode(query, "UTF-8");
         val client = OkHttpClient()
         val request =
@@ -185,7 +181,6 @@ class SearchActivity : AppCompatActivity() {
                         .build()
                 }
                 else -> {
-                    // TODO エラー処理？
                     return
                 }
             }
@@ -197,9 +192,6 @@ class SearchActivity : AppCompatActivity() {
                         swipeRefreshLayout.isRefreshing = false
                         customAdapter.addItems(mutableListOf(), false)
                         showErrorDialog()
-//                        // TODO:Error時の処理
-//                        Toast.makeText(this@SearchActivity, "エラーです。もどります。", Toast.LENGTH_SHORT).show()
-//                        finish()
                     }
                 }
 
@@ -222,14 +214,6 @@ class SearchActivity : AppCompatActivity() {
                             })
                             customAdapter.addItems(articleRowList, false)
 
-                            if(!qiitaList.isEmpty()) {
-                                // 取得結果あり
-                                textSearchZero.toggle(false)
-                            } else {
-                                // 取得結果0件
-                                textSearchZero.toggle(true)
-                            }
-
                         } ?: run {
                             customAdapter.addItems(mutableListOf(), false)
                         }
@@ -241,13 +225,14 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showErrorDialog() {
         MaterialDialog(this)
-            .title(text = "Errorです")
-            .message(text = "もう一度やり直してください")
+            .title(res = R.string.message_network_error)
+                // TODO なぜかmessageが表示できない
+            //.message(res = R.string.message_network_error)
             .show {
-            positiveButton(text = "リトライ", click = {
-                search(SEARCH_TYPE, 1, QUERY)
+            positiveButton(res = R.string.button_positive, click = {
+                search(searchType, 1, searchQuery)
             })
-            negativeButton(text = "キャンセル")
+            negativeButton(res = R.string.button_negative)
         }
     }
 

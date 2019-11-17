@@ -1,5 +1,7 @@
 package com.example.qiitaapplication.activity
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -21,11 +23,11 @@ class WebViewActivity : AppCompatActivity() {
     /** Realmインスタンス */
     lateinit var mRealm: Realm
     /** 記事URL */
-    private val mUrl by lazy {  intent.getStringExtra("url") }
+    private val mUrl by lazy { intent.getStringExtra(KEY_URL) }
     /** 記事タイトル */
-    private val mTitle by lazy {  intent.getStringExtra("title") }
+    private val mTitle by lazy { intent.getStringExtra(KEY_TITLE) }
     /** 記事ID */
-    private val mQiitaResponseID by lazy {  intent.getStringExtra("id") }
+    private val mQiitaResponseID by lazy { intent.getStringExtra(KEY_ID) }
     /** お気に入りクラス */
     lateinit var favorite: ArticleRow
 
@@ -70,7 +72,7 @@ class WebViewActivity : AppCompatActivity() {
     private fun initLayout() {
         // タイトル
         val title = this.findViewById(R.id.title) as TextView
-        title.text  = mTitle
+        title.text = mTitle
 
         initToolbar()
         initFavoriteIcon()
@@ -98,7 +100,7 @@ class WebViewActivity : AppCompatActivity() {
 
         // 戻るボタン押下時
         if (item.itemId == android.R.id.home) {
-             finish()
+            finish()
         }
 
         return super.onOptionsItemSelected(item)
@@ -175,19 +177,19 @@ class WebViewActivity : AppCompatActivity() {
      *
      */
     fun insertOrUpdate(delFlg: String) {
-        mRealm.executeTransaction {realm ->
+        mRealm.executeTransaction { realm ->
             realm.insertOrUpdate(
                 favorite.apply {
-                    if(id.isEmpty())
-                        id =   mQiitaResponseID
+                    if (id.isEmpty())
+                        id = mQiitaResponseID
                     url = if (url.isEmpty()) mUrl else url
                     title = if (title.isEmpty()) mTitle else title
-                    profileImageUrl = intent.getStringExtra("profileImageUrl")
-                    userName = intent.getStringExtra("userName")
-                    createdAt = intent.getStringExtra("createdAt")
-                    likesCount = intent.getStringExtra("likesCount")
-                    commentCount = intent.getStringExtra("commentCount")
-                    tags = intent.getStringExtra("tags")
+                    profileImageUrl = intent.getStringExtra(KEY_PROFILE_IMAGE_URL)
+                    userName = intent.getStringExtra(KEY_USER_NAME)
+                    createdAt = intent.getStringExtra(KEY_CREATED_AT)
+                    likesCount = intent.getStringExtra(KEY_LIKES_COUNT)
+                    commentCount = intent.getStringExtra(KEY_COMMENT_COUNT)
+                    tags = intent.getStringExtra(KEY_TAGS)
                     updDate = Date().getDateToString()
                     this.delFlg = delFlg
 
@@ -212,6 +214,25 @@ class WebViewActivity : AppCompatActivity() {
      */
     fun log_favorite() {
         Log.d("Favorite", "{$favorite}")
+    }
+
+    companion object {
+
+        public const val KEY_ID = "key_id"
+        public const val KEY_URL = "key_url"
+        public const val KEY_TITLE = "key_title"
+        public const val KEY_PROFILE_IMAGE_URL = "key_profileImageUrl"
+        public const val KEY_USER_NAME = "key_userName"
+        public const val KEY_CREATED_AT = "key_createdAt"
+        public const val KEY_LIKES_COUNT = "key_likesCount"
+        public const val KEY_COMMENT_COUNT = "key_commentCount"
+        public const val KEY_TAGS = "key_tags"
+
+        fun start(context: Context?, bundle: Bundle) = context?.startActivity(
+                Intent(context, WebViewActivity::class.java)
+                    .putExtras(bundle)
+
+            )
     }
 }
 

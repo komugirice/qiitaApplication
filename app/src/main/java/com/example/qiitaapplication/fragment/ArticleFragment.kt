@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.google.gson.Gson
@@ -27,11 +29,12 @@ class ArticleFragment : Fragment() {
 
     private val handler = Handler()
     /** ArticleAdapter */
-    private val customAdapter by lazy { ArticleAdapter(context) }
+    private val customAdapter by lazy { ArticleAdapter(context, false) }
     /** EndlessScrollListenerインスタンス */
     private lateinit var mEndlessScrollListener: EndlessScrollListener
-    /** Qiita記事リスト */
-    private val items = mutableListOf<QiitaResponse>()
+
+    /** 作業用Qiita記事リスト */
+    private var workArticleRowList: MutableList<ArticleRow> = mutableListOf()
 
 
     override fun onCreateView(
@@ -58,7 +61,7 @@ class ArticleFragment : Fragment() {
      */
     private fun initData() {
         // QiitaAPI実行
-        updateData(1)
+        updateData(1, true)
     }
 
     /**
@@ -92,7 +95,7 @@ class ArticleFragment : Fragment() {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
                     // API実行
-                    updateData(current_page)
+                    updateData(current_page, false)
                 }
             }
             // RecyclerViewスクロール対応
@@ -110,10 +113,11 @@ class ArticleFragment : Fragment() {
             // 上にスワイプした時に呼ばれます。
             swipeRefreshLayout.isRefreshing = true
             customAdapter.clear()
-            // ndlessScrollのバグ修正
+            // endlessScrollのバグ修正
             mEndlessScrollListener.reset()
 
-            updateData(1)
+            // TODO API取得とrefresh or addItemと処理を分けること
+            updateData(1, true)
         }
     }
 
@@ -132,7 +136,7 @@ class ArticleFragment : Fragment() {
      * @param page
      *
      */
-    fun updateData(page: Int) {
+    fun updateData(page: Int, isRefresh: Boolean) {
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://qiita.com/api/v2/items?page=${page}&per_page=20")
@@ -143,7 +147,10 @@ class ArticleFragment : Fragment() {
                     handler.post {
                         //hideProgress()
                         swipeRefreshLayout.isRefreshing = false
-                        customAdapter.addItems(mutableListOf(), false)
+                        if (isRefresh)
+                            customAdapter.refresh(mutableListOf(), false)
+                        else
+                            customAdapter.addItems(mutableListOf(), false)
                     }
                 }
 
@@ -163,15 +170,33 @@ class ArticleFragment : Fragment() {
                                         row.convertFromQiitaResponse(resp)
                                         articleRowList.add(row)
                             })
-                            customAdapter.addItems(articleRowList, false)
+                            if (isRefresh)
+                                customAdapter.refresh(articleRowList, false)
+                            else
+                                customAdapter.addItems(articleRowList, false)
+
                         } ?: run {
-                            customAdapter.addItems(mutableListOf(), false)
+                            if (isRefresh)
+                                customAdapter.refresh(mutableListOf(), false)
+                            else
+                                customAdapter.addItems(mutableListOf(), false)
                         }
                     }
                 }
             })
         }
     }
-
+    private fun showErrorDialog() {
+        MaterialDialog(context!!)
+            .title(res = R.string.message_network_error)
+            // TODO なぜかmessageが表示できない
+            //.message(res = R.string.message_network_error)
+            .show {
+                positiveButton(res = R.string.button_positive, click = {
+                    updateData(1, true)
+                })
+                negativeButton(res = R.string.button_negative)
+            }
+    }
 
 }

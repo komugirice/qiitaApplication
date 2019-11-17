@@ -14,11 +14,11 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
     internal var firstVisibleItem: Int = 0
     internal var visibleItemCount: Int = 0
     internal var totalItemCount: Int = 0
-    private var visibleThreshold = 0
+    private var visibleThreshold = 10
     private var previousTotal = 0
     private var loading = true
     private var current_page = 1
-    // スクロールする為の前回取得件数を指定してください。
+    // スクロール条件件数を指定してください。取得件数が下回る場合はスクロールしません。
     private val scrollOnItemCount: Int = 20
 
 
@@ -45,7 +45,7 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
             }
         }
 
-        // 取得件数が上回る場合だけ実行する
+        // 取得件数がスクロール条件件数を上回る場合だけ実行する
         if (scrollOnItemCount <= totalItemCount) {
             if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
                 current_page++

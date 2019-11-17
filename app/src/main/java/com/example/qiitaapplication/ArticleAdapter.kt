@@ -2,7 +2,6 @@ package com.example.qiitaapplication
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,8 +24,7 @@ import kotlinx.android.synthetic.main.row.view.*
  * ArticleAdapterクラス
  *
  */
-class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val SEARCH_TAG = 1
+class ArticleAdapter(private val context: Context?, private val isFavorite: Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<QiitaData>()
 
@@ -58,21 +56,22 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
                     // クリック時の処理
                     val bundle = Bundle()
                     bundle.apply {
-                        putString("id", items[position].row.id)
-                        putString("url", items[position].row.url)
-                        putString("title", items[position].row.title)
-                        putString("profileImageUrl", items[position].row.profileImageUrl)
-                        putString("userName", items[position].row.userName)
-                        putString("createdAt", items[position].row.createdAt)
-                        putString("likesCount", items[position].row.likesCount)
-                        putString("commentCount", items[position].row.commentCount)
-                        putString("tags", items[position].row.tags)
+                        putString(WebViewActivity.KEY_ID, items[position].row.id)
+                        putString(WebViewActivity.KEY_URL, items[position].row.url)
+                        putString(WebViewActivity.KEY_TITLE, items[position].row.title)
+                        putString(WebViewActivity.KEY_PROFILE_IMAGE_URL, items[position].row.profileImageUrl)
+                        putString(WebViewActivity.KEY_USER_NAME, items[position].row.userName)
+                        putString(WebViewActivity.KEY_CREATED_AT, items[position].row.createdAt)
+                        putString(WebViewActivity.KEY_LIKES_COUNT, items[position].row.likesCount)
+                        putString(WebViewActivity.KEY_COMMENT_COUNT, items[position].row.commentCount)
+                        putString(WebViewActivity.KEY_TAGS, items[position].row.tags)
 
                     }
 
-                    val intent = Intent(context, WebViewActivity::class.java)
-                    intent.putExtras(bundle)
-                    context?.startActivity(intent)
+                    WebViewActivity.start(context, bundle)
+//                    val intent = Intent(context, WebViewActivity::class.java)
+//                    intent.putExtras(bundle)
+//                    context?.startActivity(intent)
                 }
             })
 
@@ -82,10 +81,6 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
                 // 押下したタグごとに遷移
                 val itemsPos = holder.adapterPosition // positionを取得
                 // SearchActivityに遷移
-//            val intent = Intent(context, SearchActivity::class.java)
-//            intent.putExtra("query", tag.text)
-//            intent.putExtra("searchType", SEARCH_TAG)
-//            context?.startActivity(intent)
                 (context as? Activity)?.also {
                     SearchActivity.start(it, tag.text, true)
                 }
@@ -110,6 +105,9 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is RowViewHolder)
             onBindViewHolder(holder, position)
+        else if (holder is EmptyViewHolder) {
+            onBindEmptyViewHolder(holder, position)
+        }
     }
 
     private fun onBindViewHolder(holder: RowViewHolder, position: Int) {
@@ -148,6 +146,14 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
     }
 
+    private fun onBindEmptyViewHolder(holder: EmptyViewHolder, position: Int) {
+        if(isFavorite) {
+            holder.searchZeroText.text = context?.getString(R.string.favorite_count_zero)
+        } else {
+            holder.searchZeroText.text = context?.getString(R.string.search_count_zero)
+        }
+    }
+
     /**
      * getItemCountメソッド
      *
@@ -164,7 +170,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (items.isEmpty()) VIEW_TYPE_EMPTY else VIEW_TYPE_ITEM
+        return if (items.isEmpty() ) VIEW_TYPE_EMPTY else VIEW_TYPE_ITEM
     }
 
     /**
@@ -173,6 +179,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
      * @param list
      */
     fun refresh(list: List<ArticleRow>, isFavorite: Boolean) {
+        // リフレッシュ実行フラグON
         hasCompletedFirstRefresh = true
         val qiitaList : MutableList<QiitaData> = mutableListOf()
         list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
@@ -180,6 +187,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
             clear()
             addAll(qiitaList)
         }
+
         notifyDataSetChanged()
     }
 
@@ -189,6 +197,8 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
      * @param list
      */
     fun addItems(list: List<ArticleRow>, isFavorite: Boolean) {
+        // リフレッシュ実行フラグON
+        hasCompletedFirstRefresh = true
         val qiitaList : MutableList<QiitaData> = mutableListOf()
         list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
         items.apply {
@@ -202,6 +212,8 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
      *
      */
     fun clear() {
+        // 上スワイプで「検索結果0件」表示のバグ対応
+        hasCompletedFirstRefresh = false
         items.apply {
             clear()
         }
@@ -226,11 +238,22 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
         var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
     }
 
-    class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    /**
+     * EmptyViewHolderクラス
+     * 検索結果が0件の場合の
+     *
+     * @param itemView
+     */
+    class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var searchZeroText = itemView.findViewById(R.id.searchZeroText) as TextView
+    }
 
     /**
      * QiitaDataクラス
      * お気に入りから取得とそうでないものを区別する為に使う
+     * ※ArticleAdapterの引数にisFavoriteを設定しているから不要だが、
+     * 　一応記事にお気に入りアイコンつけるかもしれないので残す
+     * 　
      *
      */
     class QiitaData {
@@ -246,5 +269,7 @@ class ArticleAdapter(private val context: Context?) : RecyclerView.Adapter<Recyc
     companion object {
         private const val VIEW_TYPE_EMPTY = 0
         private const val VIEW_TYPE_ITEM = 1
+
+        private const val SEARCH_TAG = 1
     }
 }

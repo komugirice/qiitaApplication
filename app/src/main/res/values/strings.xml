@@ -9,11 +9,16 @@
     <string name="tab_favorite">お気に入り</string>
     <!-- お気に入り画面 -->
     <string name="button_show_all_record">保存レコードのログを出す</string>
+    <string name="favorite_count_zero">お気に入りはありません。</string>
 
     <!-- メニュー -->
     <string name="menu_list_options_finish">終了</string>
     <!-- 検索メニュー -->
     <string name="label_search_title">投稿検索</string>
     <string name="search_count_zero">検索結果が0件です</string>
-    <string name="error_network">APIの実行に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
+    <!-- ネットワークエラーダイアログ -->
+    <string name="title_network_error">ネットワークエラー</string>
+    <string name="message_network_error">APIの実行に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
+    <string name="button_positive">リトライ</string>
+    <string name="button_negative">キャンセル</string>
 </resources>

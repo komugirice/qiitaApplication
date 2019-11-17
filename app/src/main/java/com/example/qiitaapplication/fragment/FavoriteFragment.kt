@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_favorite.*
 class FavoriteFragment : Fragment() {
 
     /** RecyclerListAdapter */
-    private val customAdapter by lazy { ArticleAdapter(context) }
+    private val customAdapter by lazy { ArticleAdapter(context, true) }
     /** Realmインスタンス */
     lateinit var mRealm: Realm
     /** お気に入りリスト */

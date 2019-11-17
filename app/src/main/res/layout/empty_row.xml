@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/searchZeroText"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="@android:color/black"
-    android:textSize="100sp"
-    android:text="からです"
-    android:gravity="center"
-    android:textColor="@android:color/white"
-    android:layout_height="match_parent">
+    android:text="@string/search_count_zero"
+    android:gravity="center_horizontal"
+    android:textColor="@android:color/black">
 
 </TextView>
