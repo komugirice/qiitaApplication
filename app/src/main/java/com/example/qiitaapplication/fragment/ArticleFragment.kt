@@ -187,16 +187,18 @@ class ArticleFragment : Fragment() {
         }
     }
     private fun showErrorDialog() {
-        MaterialDialog(context!!)
-            .title(res = R.string.message_network_error)
-            // TODO なぜかmessageが表示できない
-            //.message(res = R.string.message_network_error)
-            .show {
-                positiveButton(res = R.string.button_positive, click = {
-                    updateData(1, true)
-                })
-                negativeButton(res = R.string.button_negative)
-            }
+        context?.also {
+            MaterialDialog(it)
+                .title(res = R.string.message_network_error)
+                // TODO なぜかmessageが表示できない
+                //.message(res = R.string.message_network_error)
+                .show {
+                    positiveButton(res = R.string.button_positive, click = {
+                        updateData(1, true)
+                    })
+                    negativeButton(res = R.string.button_negative)
+                }
+        }
     }
 
 }
