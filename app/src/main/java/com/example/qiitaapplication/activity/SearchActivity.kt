@@ -203,14 +203,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showErrorDialog() {
         MaterialDialog(this)
-            .title(res = R.string.message_network_error)
-                // TODO なぜかmessageが表示できない
-            //.message(res = R.string.message_network_error)
+            .title(res = R.string.title_network_error)
+            .message(res = R.string.message_network_error)
             .show {
-            positiveButton(res = R.string.button_positive, click = {
-                search(searchType, 1, searchQuery)
-            })
-            negativeButton(res = R.string.button_negative)
+                positiveButton(res = R.string.button_positive, click = {
+                    search(searchType, 1, searchQuery)
+                })
+                negativeButton(res = R.string.button_negative)
         }
     }
 

@@ -8,6 +8,8 @@
         <!--suppress AndroidDomInspection -->
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">#FFFFFF</item>
+        <!-- MaterialDialog用 -->
+        <item name="md_color_content">@color/colorBlack</item>
     </style>
 
 </resources>

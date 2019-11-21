@@ -18,7 +18,7 @@
     <string name="search_count_zero">検索結果が0件です</string>
     <!-- ネットワークエラーダイアログ -->
     <string name="title_network_error">ネットワークエラー</string>
-    <string name="message_network_error">APIの実行に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
+    <string name="message_network_error">APIの通信に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
     <string name="button_positive">リトライ</string>
     <string name="button_negative">キャンセル</string>
 </resources>
