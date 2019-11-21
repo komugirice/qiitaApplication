@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             showKeybord()
         }
         deleteImageView.setOnClickListener {
+            // 2回タッチで閉じる
 //            if (searchEditText.text.isEmpty())
 //                changeSearchView(false)
 //            else
@@ -95,12 +96,6 @@ class MainActivity : AppCompatActivity() {
                 // EditTextに値がある場合
                 if(textView.text.toString().isNotEmpty()) {
                     // SearchActivityに遷移
-//                    val intent = Intent(this@MainActivity, SearchActivity::class.java)
-//                    intent.putExtra("query", textView.text.toString())
-//                    intent.putExtra("searchType", SEARCH_BODY)
-//                    // SearchActivityに遷移
-//                    startActivity(intent)
-
                     SearchActivity.start(this, textView.text.toString(), false)
                 }
                 //true
@@ -109,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+// Toolbar削除　ここから
     /**
      * initToolbarメソッド
      *
@@ -186,6 +181,7 @@ class MainActivity : AppCompatActivity() {
 //        return super.onOptionsItemSelected(item)
 //
 //    }
+// Toolbar削除　ここまで
 
     private fun initViewPager() {
         viewPager.apply {

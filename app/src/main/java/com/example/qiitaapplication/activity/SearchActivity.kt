@@ -11,18 +11,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.QiitaApi
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.dataclass.QiitaResponse
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_web_view.toolbar
 import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
-import okhttp3.*
-import java.io.IOException
+import okhttp3.OkHttpClient
 import java.net.URLEncoder
 
 class SearchActivity : AppCompatActivity() {
@@ -164,63 +164,41 @@ class SearchActivity : AppCompatActivity() {
      */
     fun search(type: Int, page: Int, query: String) {
         // searchQueryのエンコード
-        val encordQuery = URLEncoder.encode(query, "UTF-8");
+        val encodeQuery = URLEncoder.encode(query, "UTF-8");
         val client = OkHttpClient()
-        val request =
+        val observable =
             when(type) {
                 // 検索バー
                 SEARCH_BODY -> {
-                    Request.Builder()
-                        .url("https://qiita.com/api/v2/items?page=${page}&per_page=20&query=body:${encordQuery}")
-                    .build()
+                    QiitaApi.items.searchBody(page, encodeQuery)
                 }
                 // タグ
                 SEARCH_TAG -> {
-                    Request.Builder()
-                        .url("https://qiita.com/api/v2/tags/${encordQuery}/items?page=${page}&per_page=20")
-                        .build()
+                    QiitaApi.tags.searchTag(encodeQuery, page)
                 }
                 else -> {
                     return
                 }
             }
-        client.run {
-            newCall(request).enqueue(object: Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    handler.post {
-                        //hideProgress()
-                        swipeRefreshLayout.isRefreshing = false
-                        customAdapter.addItems(mutableListOf(), false)
-                        showErrorDialog()
-                    }
-                }
 
-                override fun onResponse(call: Call, response: Response) {
-                    handler.post {
-                        //hideProgress()
-                        swipeRefreshLayout.isRefreshing = false
-                        response.body?.string()?.also {
-                            // json取得
-                            val gson = Gson()
-                            val type = object : TypeToken<List<QiitaResponse>>() {}.type
-                            val qiitaList = gson.fromJson<List<QiitaResponse>>(it, type)
-
-                            // RecyclerViewのAdapter用のMutableList<ArticleRow>に変換
-                            var articleRowList: MutableList<ArticleRow> = mutableListOf()
-                            qiitaList.forEach({ resp ->
-                                val row = ArticleRow()
-                                row.convertFromQiitaResponse(resp)
-                                articleRowList.add(row)
-                            })
-                            customAdapter.addItems(articleRowList, false)
-
-                        } ?: run {
-                            customAdapter.addItems(mutableListOf(), false)
-                        }
-                    }
-                }
-            })
-        }
+        observable.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                // RecyclerViewのAdapter用のMutableList<ArticleRow>に変換
+                var articleRowList: MutableList<ArticleRow> = mutableListOf()
+                it.forEach({ resp ->
+                    val row = ArticleRow()
+                    row.convertFromQiitaResponse(resp)
+                    articleRowList.add(row)
+                })
+                customAdapter.addItems(articleRowList, false)
+            }, {
+                customAdapter.addItems(mutableListOf(), false)
+                showErrorDialog()
+                swipeRefreshLayout.isRefreshing = false
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+        })
     }
 
     private fun showErrorDialog() {

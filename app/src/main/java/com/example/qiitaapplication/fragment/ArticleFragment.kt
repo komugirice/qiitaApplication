@@ -11,14 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.QiitaApi
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.dataclass.ArticleRow
-import com.example.qiitaapplication.dataclass.QiitaResponse
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_article.*
-import okhttp3.*
-import java.io.IOException
 
 
 /**
@@ -137,54 +135,34 @@ class ArticleFragment : Fragment() {
      *
      */
     fun updateData(page: Int, isRefresh: Boolean) {
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url("https://qiita.com/api/v2/items?page=${page}&per_page=20")
-            .build()
-        client.run {
-            newCall(request).enqueue(object: Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    handler.post {
-                        //hideProgress()
-                        swipeRefreshLayout.isRefreshing = false
-                        if (isRefresh)
-                            customAdapter.refresh(mutableListOf(), false)
-                        else
-                            customAdapter.addItems(mutableListOf(), false)
-                    }
-                }
+        QiitaApi.items.getItem(page)
+            .observeOn(mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                var articleRowList : MutableList<ArticleRow>  = mutableListOf()
+                it.forEach({
+                        resp ->
+                    val row = ArticleRow()
+                    row.convertFromQiitaResponse(resp)
+                    articleRowList.add(row)
+                })
+                if (isRefresh)
+                    customAdapter.refresh(articleRowList, false)
+                else
+                    customAdapter.addItems(articleRowList, false)
 
-                override fun onResponse(call: Call, response: Response) {
-                    handler.post {
-                        //hideProgress()
-                        swipeRefreshLayout.isRefreshing = false
-                        response.body?.string()?.also {
-                            val gson = Gson()
-                            val type = object : TypeToken<List<QiitaResponse>>() {}.type
-                            val qiitaList = gson.fromJson<List<QiitaResponse>>(it, type)
-                            // RecyclerViewのAdapter用に変換
-                            var articleRowList : MutableList<ArticleRow>  = mutableListOf()
-                            qiitaList.forEach({
-                                    resp ->
-                                        val row = ArticleRow()
-                                        row.convertFromQiitaResponse(resp)
-                                        articleRowList.add(row)
-                            })
-                            if (isRefresh)
-                                customAdapter.refresh(articleRowList, false)
-                            else
-                                customAdapter.addItems(articleRowList, false)
+            }, {
+                if (isRefresh)
+                    customAdapter.refresh(mutableListOf(), false)
+                else
+                    customAdapter.addItems(mutableListOf(), false)
 
-                        } ?: run {
-                            if (isRefresh)
-                                customAdapter.refresh(mutableListOf(), false)
-                            else
-                                customAdapter.addItems(mutableListOf(), false)
-                        }
-                    }
-                }
-            })
-        }
+                showErrorDialog()
+                swipeRefreshLayout.isRefreshing = false
+            },{
+                swipeRefreshLayout.isRefreshing = false
+        })
+
     }
     private fun showErrorDialog() {
         context?.also {
