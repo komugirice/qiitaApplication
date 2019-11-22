@@ -162,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
      * @param query
      *
      */
-    fun search(type: Int, page: Int, query: String) {
+    fun search(type: Int, page: Int, query: String, onSuccess: (List<ArticleRow>) -> Unit = {}) {
         // searchQueryのエンコード
         val encodeQuery = URLEncoder.encode(query, "UTF-8");
         val client = OkHttpClient()
@@ -194,24 +194,25 @@ class SearchActivity : AppCompatActivity() {
                 customAdapter.addItems(articleRowList, false)
             }, {
                 customAdapter.addItems(mutableListOf(), false)
-                showErrorDialog()
+                showErrorDialog(page)
                 swipeRefreshLayout.isRefreshing = false
             }, {
                 swipeRefreshLayout.isRefreshing = false
-        })
+            })
     }
 
-    private fun showErrorDialog() {
+    private fun showErrorDialog(page: Int) {
         MaterialDialog(this)
             .title(res = R.string.title_network_error)
             .message(res = R.string.message_network_error)
             .show {
                 positiveButton(res = R.string.button_positive, click = {
-                    search(searchType, 1, searchQuery)
+                    search(searchType, page, searchQuery)
                 })
                 negativeButton(res = R.string.button_negative)
-        }
+            }
     }
+
 
     /**
      * onDestroyメソッド

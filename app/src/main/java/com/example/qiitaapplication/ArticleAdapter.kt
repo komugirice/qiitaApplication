@@ -175,6 +175,7 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
 
     /**
      * refreshメソッド
+     * (clear→addItems呼べばrefresh不要論)
      *
      * @param list
      */

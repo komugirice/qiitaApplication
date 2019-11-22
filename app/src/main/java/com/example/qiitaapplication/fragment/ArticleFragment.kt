@@ -59,7 +59,9 @@ class ArticleFragment : Fragment() {
      */
     private fun initData() {
         // QiitaAPI実行
-        updateData(1, true)
+        updateData(1) {
+            customAdapter.refresh(it, false)
+        }
     }
 
     /**
@@ -93,7 +95,9 @@ class ArticleFragment : Fragment() {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
                     // API実行
-                    updateData(current_page, false)
+                    updateData(current_page){
+                        customAdapter.addItems(it, false)
+                    }
                 }
             }
             // RecyclerViewスクロール対応
@@ -114,8 +118,10 @@ class ArticleFragment : Fragment() {
             // endlessScrollのバグ修正
             mEndlessScrollListener.reset()
 
-            // TODO API取得とrefresh or addItemと処理を分けること
-            updateData(1, true)
+            // QiitaAPI実行
+            updateData(1) {
+                customAdapter.refresh(it, false)
+            }
         }
     }
 
@@ -134,7 +140,7 @@ class ArticleFragment : Fragment() {
      * @param page
      *
      */
-    fun updateData(page: Int, isRefresh: Boolean) {
+    fun updateData(page: Int, onSuccess: (List<ArticleRow>) -> Unit = {}) {
         QiitaApi.items.getItem(page)
             .observeOn(mainThread())
             .subscribeOn(Schedulers.io())
@@ -146,32 +152,32 @@ class ArticleFragment : Fragment() {
                     row.convertFromQiitaResponse(resp)
                     articleRowList.add(row)
                 })
-                if (isRefresh)
-                    customAdapter.refresh(articleRowList, false)
-                else
-                    customAdapter.addItems(articleRowList, false)
+//                if (isRefresh)
+//                    customAdapter.refresh(articleRowList, false)
+//                else
+//                    customAdapter.addItems(articleRowList, false)
+                onSuccess.invoke(articleRowList)
 
             }, {
-                if (isRefresh)
-                    customAdapter.refresh(mutableListOf(), false)
-                else
-                    customAdapter.addItems(mutableListOf(), false)
+                customAdapter.refresh(mutableListOf(), false)
 
-                showErrorDialog()
+                showErrorDialog(page)
                 swipeRefreshLayout.isRefreshing = false
             },{
                 swipeRefreshLayout.isRefreshing = false
         })
 
     }
-    private fun showErrorDialog() {
+    private fun showErrorDialog(page: Int) {
         context?.also {
             MaterialDialog(it)
                 .title(res = R.string.title_network_error)
                 .message(res = R.string.message_network_error)
                 .show {
                     positiveButton(res = R.string.button_positive, click = {
-                        updateData(1, true)
+                        updateData(page){
+                            customAdapter.addItems(it, false)
+                        }
                     })
                     negativeButton(res = R.string.button_negative)
                 }
