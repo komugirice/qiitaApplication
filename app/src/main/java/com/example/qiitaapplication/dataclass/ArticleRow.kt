@@ -2,7 +2,7 @@ package com.example.qiitaapplication.dataclass
 
 import android.util.Log
 import com.example.qiitaapplication.extension.getDateToString
-import com.example.qiitaapplication.extension.utcDate2Date
+import com.example.qiitaapplication.extension.utcDateToDate
 import io.realm.Realm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -59,7 +59,7 @@ open class ArticleRow (
         title = resp.title
         profileImageUrl = resp.user.profile_image_url
         userName = resp.user.name
-        createdAt = resp.created_at.utcDate2Date()
+        createdAt = resp.created_at.utcDateToDate()
         likesCount = resp.likes_count.toString()
         commentCount = resp.comments_count.toString()
         tags = resp.tags.map { it.name }.joinToString (separator = ",")

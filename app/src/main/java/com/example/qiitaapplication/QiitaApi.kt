@@ -37,14 +37,14 @@ object QiitaApi {
 
         //@GET("items?page={page}&per_page=20&query=body:{encodeQuery}")
         @GET("items")
-        fun searchBody(@Query("page") page: Int, @Query("query") encodeQuery: String
+        fun searchBody(@Query("page") page: Int, @Query("query", encoded=true) encodeQuery: String
                        , @Query("per_page") perPage: Int = 20) : Observable<List<QiitaResponse>>
 
     }
 
     interface TagsIF {
         @GET("tags/{encodeQuery}/items")
-        fun searchTag(@Path("encodeQuery") encodeQuery: String, @Query("page") page: Int
+        fun searchTag(@Path("encodeQuery", encoded=true) encodeQuery: String, @Query("page") page: Int
                       , @Query("per_page") perPage: Int = 20): Observable<List<QiitaResponse>>
     }
 }
