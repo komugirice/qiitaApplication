@@ -14,5 +14,5 @@ QiitaAPIを使用して記事を取得・表示します。
 ## 使用している技術
 ・Kotlin<br>
 ・Retrofit2<br>
-・Rxjava2<br>
+・RxJava2<br>
 ・Realm<br>
