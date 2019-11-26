@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +24,9 @@ import kotlinx.android.synthetic.main.activity_web_view.toolbar
 import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import java.net.URLEncoder
+import java.net.UnknownHostException
 
 class SearchActivity : AppCompatActivity() {
 
@@ -194,17 +197,27 @@ class SearchActivity : AppCompatActivity() {
                 customAdapter.addItems(articleRowList, false)
             }, {
                 customAdapter.addItems(mutableListOf(), false)
-                showErrorDialog(page)
+                when(it) {
+                    is UnknownHostException -> {
+                        showErrorDialog(R.string.title_network_error,
+                            R.string.message_network_error, page)
+                    }
+                    is HttpException -> {
+                        showErrorDialog(R.string.title_api_error,
+                            R.string.message_api_error, page)
+                    }
+                    else -> Log.e("QiitaAPI", "UnExpected Error")
+                }
                 swipeRefreshLayout.isRefreshing = false
             }, {
                 swipeRefreshLayout.isRefreshing = false
             })
     }
 
-    private fun showErrorDialog(page: Int) {
+    private fun showErrorDialog(titleRes: Int, messageRes: Int, page: Int) {
         MaterialDialog(this)
-            .title(res = R.string.title_network_error)
-            .message(res = R.string.message_network_error)
+            .title(res = titleRes)
+            .message(res = messageRes)
             .show {
                 positiveButton(res = R.string.button_positive, click = {
                     search(searchType, page, searchQuery)

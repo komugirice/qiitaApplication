@@ -3,6 +3,7 @@ package com.example.qiitaapplication.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import com.example.qiitaapplication.dataclass.ArticleRow
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_article.*
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 
 /**
@@ -160,19 +163,28 @@ class ArticleFragment : Fragment() {
 
             }, {
                 customAdapter.refresh(mutableListOf(), false)
-
-                showErrorDialog(page)
+                when(it) {
+                    is UnknownHostException -> {
+                        showErrorDialog(R.string.title_network_error,
+                            R.string.message_network_error, page)
+                    }
+                    is HttpException -> {
+                        showErrorDialog(R.string.title_api_error,
+                            R.string.message_api_error, page)
+                    }
+                    else -> Log.e("QiitaAPI", "UnExpected Error")
+                }
                 swipeRefreshLayout.isRefreshing = false
             },{
                 swipeRefreshLayout.isRefreshing = false
         })
 
     }
-    private fun showErrorDialog(page: Int) {
+    private fun showErrorDialog(titleRes: Int, messageRes: Int, page: Int) {
         context?.also {
             MaterialDialog(it)
-                .title(res = R.string.title_network_error)
-                .message(res = R.string.message_network_error)
+                .title(res = titleRes)
+                .message(res = messageRes)
                 .show {
                     positiveButton(res = R.string.button_positive, click = {
                         updateData(page){

@@ -37,7 +37,7 @@ object QiitaApi {
 
         //@GET("items?page={page}&per_page=20&query=body:{encodeQuery}")
         @GET("items")
-        fun searchBody(@Query("page") page: Int, @Query("query", encoded=true) encodeQuery: String
+        fun searchBody(@Query("page") page: Int, @Query("query") encodeQuery: String
                        , @Query("per_page") perPage: Int = 20) : Observable<List<QiitaResponse>>
 
     }

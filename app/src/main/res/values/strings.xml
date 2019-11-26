@@ -21,4 +21,8 @@
     <string name="message_network_error">APIの通信に失敗しました。ネットワーク通信環境お確かめ下さい。</string>
     <string name="button_positive">リトライ</string>
     <string name="button_negative">キャンセル</string>
+    <!-- APIエラーダイアログ -->
+    <string name="title_api_error">APIエラー</string>
+    <string name="message_api_error">APIの実行中にエラーが発生しました。</string>
+
 </resources>
