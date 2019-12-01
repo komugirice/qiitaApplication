@@ -4,6 +4,7 @@ buildscript {
     ext {
         kotlin_version = '1.3.50'
         okhttp_version = '4.2.1'
+        lifecycler_version = '2.0.0'
         ext.retrofit_version = '2.6.2'
         ext.rx_kotlin_version = '2.4.0-RC3'
         ext.rx_android_version = '2.1.1'

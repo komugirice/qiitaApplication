@@ -3,23 +3,18 @@ package com.example.qiitaapplication.fragment
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
-import com.example.qiitaapplication.QiitaApi
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.dataclass.ArticleRow
-import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
-import io.reactivex.schedulers.Schedulers
+import com.example.qiitaapplication.databinding.FragmentArticleBinding
+import com.example.qiitaapplication.viewModel.ArticleViewModel
 import kotlinx.android.synthetic.main.fragment_article.*
-import retrofit2.HttpException
-import java.net.UnknownHostException
 
 
 /**
@@ -27,6 +22,8 @@ import java.net.UnknownHostException
  */
 class ArticleFragment : Fragment() {
 
+    private lateinit var binding: FragmentArticleBinding
+    private lateinit var viewModel: ArticleViewModel
 
     private val handler = Handler()
     /** ArticleAdapter */
@@ -34,16 +31,28 @@ class ArticleFragment : Fragment() {
     /** EndlessScrollListenerインスタンス */
     private lateinit var mEndlessScrollListener: EndlessScrollListener
 
-    /** 作業用Qiita記事リスト */
-    private var workArticleRowList: MutableList<ArticleRow> = mutableListOf()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
+        inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
+
+        // initBinding
+        binding = FragmentArticleBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        // initViewModel
+        viewModel = ViewModelProviders.of(this).get(ArticleViewModel::class.java).apply {
+            items.observe(this@ArticleFragment, Observer {
+                binding.apply {
+                    // items = it
+                    customAdapter.refresh(it)
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            })
+        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +71,7 @@ class ArticleFragment : Fragment() {
      */
     private fun initData() {
         // QiitaAPI実行
-        updateData(1) {
-            customAdapter.refresh(it, false)
-        }
+        viewModel.initData(false)
     }
 
     /**
@@ -98,9 +105,7 @@ class ArticleFragment : Fragment() {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
                     // API実行
-                    updateData(current_page){
-                        customAdapter.addItems(it, false)
-                    }
+                    viewModel.updateData(current_page, false, true)
                 }
             }
             // RecyclerViewスクロール対応
@@ -122,9 +127,7 @@ class ArticleFragment : Fragment() {
             mEndlessScrollListener.reset()
 
             // QiitaAPI実行
-            updateData(1) {
-                customAdapter.refresh(it, false)
-            }
+            viewModel.updateData(1, false, false)
         }
     }
 
@@ -134,66 +137,6 @@ class ArticleFragment : Fragment() {
      *
      */
     private fun initClick() {
-    }
-
-
-    /**
-     * updateData
-     *
-     * @param page
-     *
-     */
-    fun updateData(page: Int, onSuccess: (List<ArticleRow>) -> Unit = {}) {
-        QiitaApi.items.getItem(page)
-            .observeOn(mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                var articleRowList : MutableList<ArticleRow>  = mutableListOf()
-                it.forEach({
-                        resp ->
-                    val row = ArticleRow()
-                    row.convertFromQiitaResponse(resp)
-                    articleRowList.add(row)
-                })
-//                if (isRefresh)
-//                    customAdapter.refresh(articleRowList, false)
-//                else
-//                    customAdapter.addItems(articleRowList, false)
-                onSuccess.invoke(articleRowList)
-
-            }, {
-                customAdapter.refresh(mutableListOf(), false)
-                when(it) {
-                    is UnknownHostException -> {
-                        showErrorDialog(R.string.title_network_error,
-                            R.string.message_network_error, page)
-                    }
-                    is HttpException -> {
-                        showErrorDialog(R.string.title_api_error,
-                            R.string.message_api_error, page)
-                    }
-                    else -> Log.e("QiitaAPI", "UnExpected Error")
-                }
-                swipeRefreshLayout.isRefreshing = false
-            },{
-                swipeRefreshLayout.isRefreshing = false
-        })
-
-    }
-    private fun showErrorDialog(titleRes: Int, messageRes: Int, page: Int) {
-        context?.also {
-            MaterialDialog(it)
-                .title(res = titleRes)
-                .message(res = messageRes)
-                .show {
-                    positiveButton(res = R.string.button_positive, click = {
-                        updateData(page){
-                            customAdapter.addItems(it, false)
-                        }
-                    })
-                    negativeButton(res = R.string.button_negative)
-                }
-        }
     }
 
 }

@@ -7,16 +7,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cunoraz.tagview.Tag
-import com.cunoraz.tagview.TagView
 import com.example.qiitaapplication.activity.SearchActivity
 import com.example.qiitaapplication.activity.WebViewActivity
+import com.example.qiitaapplication.databinding.RowBinding
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.extension.toggle
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row.view.*
 
 
@@ -43,10 +41,11 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
         if (viewType == VIEW_TYPE_ITEM) {
             // レイアウトインフレータを取得。
             val inflater = LayoutInflater.from(context)
+            // ビューホルダオブジェクトを生成。
+            val holder = RowViewHolder(RowBinding.inflate(inflater, parent, false))
+
             // row.xmlをインフレートし、1行分の画面部品とする。
             val view = inflater.inflate(R.layout.row, parent, false)
-            // ビューホルダオブジェクトを生成。
-            val holder = RowViewHolder(view)
 
             // クリックリスナを搭載
             view.setOnClickListener(object : View.OnClickListener {
@@ -113,19 +112,20 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
     private fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
         // プロフィール画像
-        Picasso.get().load(data.row.profileImageUrl).into(holder.profileImage)
+        //holder.binding.bindProfileImage = Picasso.get().load(data.row.profileImageUrl).get()
+        holder.binding.bindProfileImageUrl = data.row.profileImageUrl
         // タイトル
-        holder.articleTitle.text = data.row.title
+        holder.binding.bindTitle = data.row.title
         // ユーザ名 + " が" + 登録日 + " に投稿しました"
         var userInfo = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()
         userInfo += context?.getString( R.string.label_user_name ) + data.row.createdAt + context?.getString( R.string.label_created_at )
-        holder.userInfo.text = userInfo
+        holder.binding.bindUserInfo = userInfo
         // いいね数
-        holder.likesCount.text = data.row.likesCount
+        holder.binding.bindLikesCount = data.row.likesCount
         // コメント数
-        holder.commentCount.text = data.row.commentCount
+        holder.binding.bindCommentCount = data.row.commentCount
         // 登録日（お気に入り画面で使用）
-        holder.updDate.text = data.row.updDate
+        holder.binding.bindUpdDate = data.row.updDate
 
         // タググループ 5個まで
         var tagList: MutableList<Tag> = mutableListOf()
@@ -138,11 +138,11 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             tag.background = context?.getDrawable(R.drawable.ic_label_gray_24dp)
             tagList.add(tag)
         }
-        holder.tagGroup.addTags(tagList)
+        holder.binding.tagGroup.addTags(tagList)
 
         // 登録日の表示切り替え
-        holder.updDateLabel.toggle(data.isFavorite)
-        holder.updDate.toggle(data.isFavorite)
+        holder.binding.updDateLabel.toggle(data.isFavorite)
+        holder.binding.updDate.toggle(data.isFavorite)
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
     }
 
@@ -177,13 +177,11 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
      * refreshメソッド
      * (clear→addItems呼べばrefresh不要論)
      *
-     * @param list
+     * @param qiitaList
      */
-    fun refresh(list: List<ArticleRow>, isFavorite: Boolean) {
+    fun refresh(qiitaList: List<QiitaData>) {
         // リフレッシュ実行フラグON
         hasCompletedFirstRefresh = true
-        val qiitaList : MutableList<QiitaData> = mutableListOf()
-        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
         items.apply {
             clear()
             addAll(qiitaList)
@@ -197,16 +195,16 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
      *
      * @param list
      */
-    fun addItems(list: List<ArticleRow>, isFavorite: Boolean) {
-        // リフレッシュ実行フラグON
-        hasCompletedFirstRefresh = true
-        val qiitaList : MutableList<QiitaData> = mutableListOf()
-        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
-        items.apply {
-            addAll(qiitaList)
-        }
-        notifyDataSetChanged()
-    }
+//    fun addItems(list: List<ArticleRow>, isFavorite: Boolean) {
+//        // リフレッシュ実行フラグON
+//        hasCompletedFirstRefresh = true
+//        val qiitaList : MutableList<QiitaData> = mutableListOf()
+//        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
+//        items.apply {
+//            addAll(qiitaList)
+//        }
+//        notifyDataSetChanged()
+//    }
 
     /**
      * clearメソッド
@@ -227,17 +225,18 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
      *
      * @param itemView
      */
-    class RowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // リスト1行分中でメニュー名を表示する画面部品
-        var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
-        var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
-        var userInfo = itemView.findViewById(R.id.userInfo) as  TextView
-        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
-        var likesCount = itemView.findViewById(R.id.likesCount) as TextView
-        var commentCount = itemView.findViewById(R.id.commentCount) as TextView
-        var updDate = itemView.findViewById(R.id.updDate) as TextView
-        var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
-    }
+    class RowViewHolder(val binding: RowBinding): RecyclerView.ViewHolder(binding.root)
+//    class RowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//        // リスト1行分中でメニュー名を表示する画面部品
+//        var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
+//        var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
+//        var userInfo = itemView.findViewById(R.id.userInfo) as  TextView
+//        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
+//        var likesCount = itemView.findViewById(R.id.likesCount) as TextView
+//        var commentCount = itemView.findViewById(R.id.commentCount) as TextView
+//        var updDate = itemView.findViewById(R.id.updDate) as TextView
+//        var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
+//    }
 
     /**
      * EmptyViewHolderクラス

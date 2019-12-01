@@ -66,7 +66,7 @@ class FavoriteFragment : Fragment() {
     private fun initData() {
         // realmから取得
         favoriteList = readAll() ?: mutableListOf()
-        customAdapter.refresh(favoriteList, true)
+        //customAdapter.refresh(favoriteList, true)
     }
 
     /**

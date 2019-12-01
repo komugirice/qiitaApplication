@@ -194,9 +194,9 @@ class SearchActivity : AppCompatActivity() {
                     row.convertFromQiitaResponse(resp)
                     articleRowList.add(row)
                 })
-                customAdapter.addItems(articleRowList, false)
+                //customAdapter.addItems(articleRowList, false)
             }, {
-                customAdapter.addItems(mutableListOf(), false)
+                //customAdapter.addItems(mutableListOf(), false)
                 when(it) {
                     is UnknownHostException -> {
                         showErrorDialog(R.string.title_network_error,

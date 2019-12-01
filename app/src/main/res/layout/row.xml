@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="bindProfileImageUrl"
+            type="String" />
+        <variable
+            name="bindTitle"
+            type="String" />
+        <variable
+            name="bindUserInfo"
+            type="String" />
+        <variable
+            name="bindLikesCount"
+            type="String" />
+        <variable
+            name="bindCommentCount"
+            type="String" />
+        <variable
+            name="bindUpdDate"
+            type="String" />
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,6 +37,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
+        app:imageUrl="@{bindProfileImageUrl}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,6 +62,7 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textColor="@color/colorBlack"
+            android:text="@{bindUserInfo}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,6 +77,7 @@
             android:ellipsize="end"
             android:textColor="@color/colorTitleBlue"
             android:textSize="18sp"
+            android:text="@{bindTitle}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userInfo" />
@@ -107,6 +132,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:textColor="@color/colorBlack"
+            android:text="@{bindLikesCount}"
             app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
             app:layout_constraintStart_toEndOf="@+id/icThumbUp"
             app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
@@ -132,6 +158,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:textColor="@color/colorBlack"
+            android:text="@{bindCommentCount}"
             app:layout_constraintBottom_toBottomOf="@+id/icThumbUp"
             app:layout_constraintStart_toEndOf="@+id/icComment"
             app:layout_constraintTop_toTopOf="@+id/icThumbUp" />
@@ -154,6 +181,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorBlack"
             android:visibility="invisible"
+            android:text="@{bindUpdDate}"
             app:layout_constraintBottom_toBottomOf="@+id/updDateLabel"
             app:layout_constraintStart_toEndOf="@+id/updDateLabel"
             app:layout_constraintTop_toTopOf="@+id/updDateLabel" />
@@ -171,3 +199,4 @@
         app:layout_constraintTop_toBottomOf="@+id/ConstraintLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
