@@ -66,7 +66,12 @@ class FavoriteFragment : Fragment() {
     private fun initData() {
         // realmから取得
         favoriteList = readAll() ?: mutableListOf()
-        //customAdapter.refresh(favoriteList, true)
+
+        // favoriteList → ArticleAdapter.QiitaDataにコンバート
+        val qiitaList : MutableList<ArticleAdapter.QiitaData> = mutableListOf()
+        favoriteList.forEach({ row -> qiitaList.add(ArticleAdapter.QiitaData(row, true))})
+
+        customAdapter.refresh(qiitaList)
     }
 
     /**

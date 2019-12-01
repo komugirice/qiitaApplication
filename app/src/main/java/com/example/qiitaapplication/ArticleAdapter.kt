@@ -15,7 +15,6 @@ import com.example.qiitaapplication.activity.WebViewActivity
 import com.example.qiitaapplication.databinding.RowBinding
 import com.example.qiitaapplication.dataclass.ArticleRow
 import com.example.qiitaapplication.extension.toggle
-import kotlinx.android.synthetic.main.row.view.*
 
 
 /**
@@ -48,7 +47,8 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             val view = inflater.inflate(R.layout.row, parent, false)
 
             // クリックリスナを搭載
-            view.setOnClickListener(object : View.OnClickListener {
+            holder.binding.ConstraintLayout.setOnClickListener(object : View.OnClickListener {
+            //view.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(view: View) {
 
                     val position = holder.adapterPosition // positionを取得
@@ -75,7 +75,7 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             })
 
             // タグのクリックリスナ
-            view.tagGroup.setOnTagClickListener { tag, position ->
+            holder.binding.tagGroup.setOnTagClickListener { tag, position ->
 
                 // 押下したタグごとに遷移
                 val itemsPos = holder.adapterPosition // positionを取得
@@ -111,21 +111,19 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
 
     private fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
+
         // プロフィール画像
-        //holder.binding.bindProfileImage = Picasso.get().load(data.row.profileImageUrl).get()
-        holder.binding.bindProfileImageUrl = data.row.profileImageUrl
         // タイトル
-        holder.binding.bindTitle = data.row.title
+        // いいね数
+        // コメント数
+        // 登録日（お気に入り画面で使用）
+        //holder.binding.bindProfileImage = Picasso.get().load(data.row.profileImageUrl).get()
+        holder.binding.articleRow = data.row
+
         // ユーザ名 + " が" + 登録日 + " に投稿しました"
         var userInfo = if(data.row.userName.isEmpty()) "Non-Name" else data.row.userName.trim()
         userInfo += context?.getString( R.string.label_user_name ) + data.row.createdAt + context?.getString( R.string.label_created_at )
         holder.binding.bindUserInfo = userInfo
-        // いいね数
-        holder.binding.bindLikesCount = data.row.likesCount
-        // コメント数
-        holder.binding.bindCommentCount = data.row.commentCount
-        // 登録日（お気に入り画面で使用）
-        holder.binding.bindUpdDate = data.row.updDate
 
         // タググループ 5個まで
         var tagList: MutableList<Tag> = mutableListOf()

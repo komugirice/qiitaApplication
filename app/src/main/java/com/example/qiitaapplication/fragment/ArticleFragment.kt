@@ -42,6 +42,7 @@ class ArticleFragment : Fragment() {
         // initBinding
         binding = FragmentArticleBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
+
         // initViewModel
         viewModel = ViewModelProviders.of(this).get(ArticleViewModel::class.java).apply {
             items.observe(this@ArticleFragment, Observer {

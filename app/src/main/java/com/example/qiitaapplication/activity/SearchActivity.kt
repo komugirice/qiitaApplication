@@ -4,31 +4,29 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
-import com.example.qiitaapplication.QiitaApi
 import com.example.qiitaapplication.R
-import com.example.qiitaapplication.dataclass.ArticleRow
+import com.example.qiitaapplication.databinding.ActivitySearchBinding
 import com.example.qiitaapplication.dataclass.QiitaResponse
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.example.qiitaapplication.viewModel.ArticleViewModel
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_web_view.toolbar
 import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
-import okhttp3.OkHttpClient
-import retrofit2.HttpException
-import java.net.URLEncoder
-import java.net.UnknownHostException
 
 class SearchActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySearchBinding
+    private lateinit var viewModel: ArticleViewModel
 
     /** Realmインスタンス */
     lateinit var mRealm: Realm
@@ -63,8 +61,32 @@ class SearchActivity : AppCompatActivity() {
     private fun initialize() {
         Realm.init(this)
         mRealm = Realm.getDefaultInstance()
+        initBinding()
+        initViewModel()
         initLayout()
         initData()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_search
+        )
+        binding.lifecycleOwner = this
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(ArticleViewModel::class.java).apply {
+            items.observe(this@SearchActivity, Observer {
+                binding.apply {
+                    customAdapter.refresh(it)
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            })
+        }
     }
 
     /**
@@ -128,7 +150,7 @@ class SearchActivity : AppCompatActivity() {
                 EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
-                    search(searchType, current_page, searchQuery)
+                    viewModel.search(searchType, current_page, searchQuery, true)
                 }
             })
         }
@@ -144,10 +166,9 @@ class SearchActivity : AppCompatActivity() {
             // 上にスワイプした時に呼ばれます。
             swipeRefreshLayout.isRefreshing = true
             customAdapter.clear()
-            search(searchType, 1, searchQuery)
+            viewModel.initSearch(searchType, searchQuery)
         })
     }
-
 
     /**
      * initDataメソッド
@@ -155,77 +176,8 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun initData() {
         // QiitaAPI実行
-        search(searchType, 1, searchQuery)
+        viewModel.initSearch(searchType, searchQuery)
     }
-
-    /**
-     * search
-     *
-     * @param page
-     * @param query
-     *
-     */
-    fun search(type: Int, page: Int, query: String, onSuccess: (List<ArticleRow>) -> Unit = {}) {
-        // searchQueryのエンコード
-        val encodeQuery = URLEncoder.encode(query, "UTF-8");
-        val client = OkHttpClient()
-        val observable =
-            when(type) {
-                // 検索バー
-                SEARCH_BODY -> {
-                    QiitaApi.items.searchBody(page, encodeQuery)
-                }
-                // タグ
-                SEARCH_TAG -> {
-                    QiitaApi.tags.searchTag(encodeQuery, page)
-                }
-                else -> {
-                    return
-                }
-            }
-
-        observable.observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                // RecyclerViewのAdapter用のMutableList<ArticleRow>に変換
-                var articleRowList: MutableList<ArticleRow> = mutableListOf()
-                it.forEach({ resp ->
-                    val row = ArticleRow()
-                    row.convertFromQiitaResponse(resp)
-                    articleRowList.add(row)
-                })
-                //customAdapter.addItems(articleRowList, false)
-            }, {
-                //customAdapter.addItems(mutableListOf(), false)
-                when(it) {
-                    is UnknownHostException -> {
-                        showErrorDialog(R.string.title_network_error,
-                            R.string.message_network_error, page)
-                    }
-                    is HttpException -> {
-                        showErrorDialog(R.string.title_api_error,
-                            R.string.message_api_error, page)
-                    }
-                    else -> Log.e("QiitaAPI", "UnExpected Error")
-                }
-                swipeRefreshLayout.isRefreshing = false
-            }, {
-                swipeRefreshLayout.isRefreshing = false
-            })
-    }
-
-    private fun showErrorDialog(titleRes: Int, messageRes: Int, page: Int) {
-        MaterialDialog(this)
-            .title(res = titleRes)
-            .message(res = messageRes)
-            .show {
-                positiveButton(res = R.string.button_positive, click = {
-                    search(searchType, page, searchQuery)
-                })
-                negativeButton(res = R.string.button_negative)
-            }
-    }
-
 
     /**
      * onDestroyメソッド
@@ -235,9 +187,10 @@ class SearchActivity : AppCompatActivity() {
         super.onDestroy()
         mRealm.close()
     }
+
     companion object { // comapnion object はstaticです
-        private const val SEARCH_BODY = 0
-        private const val SEARCH_TAG = 1
+        val SEARCH_BODY = 0
+        val SEARCH_TAG = 1
 
         private const val KEY_SEARCH_WORD = "key_search_word"
         private const val KEY_IS_SEARCH_BY_TAG = "key_is_search_by_tag"

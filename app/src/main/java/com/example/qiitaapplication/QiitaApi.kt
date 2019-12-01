@@ -12,8 +12,8 @@ import retrofit2.http.Query
 
 object QiitaApi {
 
-    val items: ItemsIF by lazy { retrofitApi().create(ItemsIF::class.java)}
-    val tags: TagsIF by lazy { retrofitApi().create(TagsIF::class.java)}
+    val itemsIF: ItemsIF by lazy { retrofitApi().create(ItemsIF::class.java)}
+    val tagsIF: TagsIF by lazy { retrofitApi().create(TagsIF::class.java)}
 
     fun retrofitApi(client: OkHttpClient): Retrofit =
         Retrofit.Builder()
