@@ -1,6 +1,5 @@
 package com.example.qiitaapplication.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.qiitaapplication.ArticleAdapter
@@ -10,13 +9,16 @@ import com.example.qiitaapplication.dataclass.ArticleRow
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
-import retrofit2.HttpException
 import java.net.URLEncoder
-import java.net.UnknownHostException
 
 class ArticleViewModel: ViewModel() {
 
     val items = MutableLiveData<List<ArticleAdapter.QiitaData>>()
+    val isException = MutableLiveData<Throwable>()
+    // 仕方なく現在ページをここに設置(エラー対応)
+    var currentPage = 0
+    // 仕方なく前回追加フラグをここに設置(エラー対応)
+    var isAddPrev = false
 
     fun initData(isFavorite: Boolean) {
         updateData(1, isFavorite)
@@ -50,21 +52,12 @@ class ArticleViewModel: ViewModel() {
                 setItems(articleRowList, isFavorite, isAdd)
 
             }, {
-                items.postValue(listOf())
-                when(it) {
-                    is UnknownHostException -> {
-//                        showErrorDialog(
-//                            R.string.title_network_error,
-//                            R.string.message_network_error, page)
-                    }
-                    is HttpException -> {
-//                        showErrorDialog(
-//                            R.string.title_api_error,
-//                            R.string.message_api_error, page)
-                    }
-                    else -> Log.e("QiitaAPI", "UnExpected Error")
-                }
-                //swipeRefreshLayout.isRefreshing = false
+                currentPage = page
+                isAddPrev = isAdd
+
+                //items.postValue(listOf())
+                isException.postValue(it)
+
             })
 
     }
@@ -132,37 +125,12 @@ class ArticleViewModel: ViewModel() {
                 // 取得データ反映
                 setItems(articleRowList, false, isAdd)
             }, {
-                //customAdapter.addItems(mutableListOf(), false)
-                when(it) {
-                    is UnknownHostException -> {
-//                        showErrorDialog(
-//                            R.string.title_network_error,
-//                            R.string.message_network_error, page)
-                    }
-                    is HttpException -> {
-//                        showErrorDialog(
-//                            R.string.title_api_error,
-//                            R.string.message_api_error, page)
-                    }
-                    else -> Log.e("QiitaAPI", "UnExpected Error")
-                }
+                currentPage = page
+                isAddPrev = isAdd
+
+                //items.postValue(listOf())
+                isException.postValue(it)
             })
     }
 
-    // TODO エラーダイアログの表示
-//    private fun showErrorDialog(titleRes: Int, messageRes: Int, page: Int) {
-//        context?.also {
-//            MaterialDialog(it)
-//                .title(res = titleRes)
-//                .message(res = messageRes)
-//                .show {
-//                    positiveButton(res = R.string.button_positive, click = {
-//                        updateData(page){
-//                            customAdapter.addItems(it, false)
-//                        }
-//                    })
-//                    negativeButton(res = R.string.button_negative)
-//                }
-//        }
-//    }
 }

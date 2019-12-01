@@ -25,6 +25,7 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
 
     private val items = mutableListOf<QiitaData>()
 
+    // スワイプ更新中に「検索結果が0件です」を出さない為の対応
     private var hasCompletedFirstRefresh = false
 
     /**
@@ -68,9 +69,6 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
                     }
 
                     WebViewActivity.start(context, bundle)
-//                    val intent = Intent(context, WebViewActivity::class.java)
-//                    intent.putExtras(bundle)
-//                    context?.startActivity(intent)
                 }
             })
 
@@ -109,6 +107,12 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
         }
     }
 
+    /**
+     * itemsが取得成功のViewHolder
+     *
+     * @param holder
+     * @param position
+     */
     private fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val data = items[position]
 
@@ -117,7 +121,7 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
         // いいね数
         // コメント数
         // 登録日（お気に入り画面で使用）
-        //holder.binding.bindProfileImage = Picasso.get().load(data.row.profileImageUrl).get()
+        //holder.binding.bindProfileImage = Picasso.get().load(data.row.profileImageUrl).get() → utilに移行
         holder.binding.articleRow = data.row
 
         // ユーザ名 + " が" + 登録日 + " に投稿しました"
@@ -144,6 +148,12 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
         //holder.rootView.setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) R.color.light_blue else R.color.light_yellow))
     }
 
+    /**
+     * itemsが0件のViewHolder
+     *
+     * @param holder
+     * @param position
+     */
     private fun onBindEmptyViewHolder(holder: EmptyViewHolder, position: Int) {
         if(isFavorite) {
             holder.searchZeroText.text = context?.getString(R.string.favorite_count_zero)
@@ -166,6 +176,12 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
                 0
         } else items.size
     }
+    /**
+     * itemsの数によってVIEW_TYPEを振り分け
+     *
+     * @param position
+     * @return VIEW_TYPE: Int
+     */
 
     override fun getItemViewType(position: Int): Int {
         return if (items.isEmpty() ) VIEW_TYPE_EMPTY else VIEW_TYPE_ITEM
@@ -173,7 +189,6 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
 
     /**
      * refreshメソッド
-     * (clear→addItems呼べばrefresh不要論)
      *
      * @param qiitaList
      */
@@ -187,22 +202,6 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
 
         notifyDataSetChanged()
     }
-
-    /**
-     * addItemsメソッド
-     *
-     * @param list
-     */
-//    fun addItems(list: List<ArticleRow>, isFavorite: Boolean) {
-//        // リフレッシュ実行フラグON
-//        hasCompletedFirstRefresh = true
-//        val qiitaList : MutableList<QiitaData> = mutableListOf()
-//        list.forEach({ row -> qiitaList.add(QiitaData(row, isFavorite))})
-//        items.apply {
-//            addAll(qiitaList)
-//        }
-//        notifyDataSetChanged()
-//    }
 
     /**
      * clearメソッド
@@ -224,21 +223,11 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
      * @param itemView
      */
     class RowViewHolder(val binding: RowBinding): RecyclerView.ViewHolder(binding.root)
-//    class RowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        // リスト1行分中でメニュー名を表示する画面部品
-//        var profileImage = itemView.findViewById(R.id.profileImage) as ImageView
-//        var articleTitle = itemView.findViewById(R.id.articleTitle) as TextView
-//        var userInfo = itemView.findViewById(R.id.userInfo) as  TextView
-//        var tagGroup = itemView.findViewById(R.id.tagGroup) as TagView
-//        var likesCount = itemView.findViewById(R.id.likesCount) as TextView
-//        var commentCount = itemView.findViewById(R.id.commentCount) as TextView
-//        var updDate = itemView.findViewById(R.id.updDate) as TextView
-//        var updDateLabel = itemView.findViewById(R.id.updDateLabel) as TextView
-//    }
+
 
     /**
      * EmptyViewHolderクラス
-     * 検索結果が0件の場合の
+     * 検索結果が0件の場合のViewHolder
      *
      * @param itemView
      */
@@ -249,7 +238,7 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
     /**
      * QiitaDataクラス
      * お気に入りから取得とそうでないものを区別する為に使う
-     * ※ArticleAdapterの引数にisFavoriteを設定しているから不要だが、
+     * ※ArticleAdapterコンストラクタの引数にisFavoriteを設定しているから不要だが、
      * 　一応記事にお気に入りアイコンつけるかもしれないので残す
      * 　
      *

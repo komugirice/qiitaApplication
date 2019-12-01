@@ -3,6 +3,7 @@ package com.example.qiitaapplication.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
+import com.example.qiitaapplication.R
 import com.example.qiitaapplication.databinding.FragmentArticleBinding
 import com.example.qiitaapplication.viewModel.ArticleViewModel
 import kotlinx.android.synthetic.main.fragment_article.*
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 
 /**
@@ -45,12 +50,30 @@ class ArticleFragment : Fragment() {
 
         // initViewModel
         viewModel = ViewModelProviders.of(this).get(ArticleViewModel::class.java).apply {
+            // QiitaApiが実行されて正常終了した
             items.observe(this@ArticleFragment, Observer {
                 binding.apply {
                     // items = it
                     customAdapter.refresh(it)
                     swipeRefreshLayout.isRefreshing = false
                 }
+            })
+            // QiitaAPIでExceptionが発生した
+            isException.observe(this@ArticleFragment, Observer {
+                when(it) {
+                    is UnknownHostException -> {
+                        showErrorDialog(
+                            R.string.title_network_error,
+                            R.string.message_network_error)
+                    }
+                    is HttpException -> {
+                        showErrorDialog(
+                            R.string.title_api_error,
+                            R.string.message_api_error)
+                    }
+                    else -> Log.e("QiitaAPI", "UnExpected Error")
+                }
+                binding.swipeRefreshLayout.isRefreshing = false
             })
         }
         return binding.root
@@ -132,12 +155,25 @@ class ArticleFragment : Fragment() {
         }
     }
 
-
     /**
      * initClickメソッド
      *
      */
     private fun initClick() {
+    }
+
+    private fun showErrorDialog(titleRes: Int, messageRes: Int) {
+        context?.also {
+            MaterialDialog(it)
+                .title(res = titleRes)
+                .message(res = messageRes)
+                .show {
+                    positiveButton(res = R.string.button_positive, click = {
+                        viewModel.updateData(viewModel.currentPage, false, viewModel.isAddPrev)
+                    })
+                    negativeButton(res = R.string.button_negative)
+                }
+        }
     }
 
 }

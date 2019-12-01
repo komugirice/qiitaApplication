@@ -3,7 +3,7 @@ package com.example.qiitaapplication.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -11,17 +11,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.qiitaapplication.ArticleAdapter
 import com.example.qiitaapplication.EndlessScrollListener
 import com.example.qiitaapplication.R
 import com.example.qiitaapplication.databinding.ActivitySearchBinding
-import com.example.qiitaapplication.dataclass.QiitaResponse
 import com.example.qiitaapplication.viewModel.ArticleViewModel
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_web_view.toolbar
 import kotlinx.android.synthetic.main.fragment_article.articleListView
 import kotlinx.android.synthetic.main.fragment_article.swipeRefreshLayout
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,13 +32,9 @@ class SearchActivity : AppCompatActivity() {
 
     /** Realmインスタンス */
     lateinit var mRealm: Realm
-    /** Handlerインスタンス */
-    private val handler = Handler()
 
     /** RecyclerListAdapter */
     private val customAdapter by lazy { ArticleAdapter(this, false) }
-    /** Qiita記事リスト */
-    private val items = mutableListOf<QiitaResponse>()
 
     /** 検索タイプ */
     private val searchType by lazy { if (intent.getBooleanExtra(KEY_IS_SEARCH_BY_TAG, false)) SEARCH_TAG else SEARCH_BODY }
@@ -78,13 +76,35 @@ class SearchActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
     }
 
+    /**
+     * MVVMのViewModel
+     *
+     */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ArticleViewModel::class.java).apply {
+            // QiitaApiが実行されて正常終了した
             items.observe(this@SearchActivity, Observer {
                 binding.apply {
                     customAdapter.refresh(it)
                     swipeRefreshLayout.isRefreshing = false
                 }
+            })
+            // QiitaAPIでExceptionが発生した
+            isException.observe(this@SearchActivity, Observer {
+                when(it) {
+                    is UnknownHostException -> {
+                        showErrorDialog(
+                            R.string.title_network_error,
+                            R.string.message_network_error)
+                    }
+                    is HttpException -> {
+                        showErrorDialog(
+                            R.string.title_api_error,
+                            R.string.message_api_error)
+                    }
+                    else -> Log.e("QiitaAPI", "UnExpected Error")
+                }
+                binding.swipeRefreshLayout.isRefreshing = false
             })
         }
     }
@@ -186,6 +206,18 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mRealm.close()
+    }
+
+    fun showErrorDialog(titleRes: Int, messageRes: Int) {
+        MaterialDialog(this)
+            .title(res = titleRes)
+            .message(res = messageRes)
+            .show {
+                positiveButton(res = R.string.button_positive, click = {
+                    viewModel.search(searchType, viewModel.currentPage, searchQuery, viewModel.isAddPrev)
+                })
+                negativeButton(res = R.string.button_negative)
+            }
     }
 
     companion object { // comapnion object はstaticです

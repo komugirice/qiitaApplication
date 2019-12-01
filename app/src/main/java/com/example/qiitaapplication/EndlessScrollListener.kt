@@ -18,7 +18,7 @@ abstract class EndlessScrollListener(private val mLinearLayoutManager: LinearLay
     private var previousTotal = 0
     private var loading = true
     private var current_page = 1
-    // スクロール条件件数を指定してください。取得件数が下回る場合はスクロールしません。
+    // スクロール条件件数を指定してください。取得件数を下回る場合はスクロールしません。
     private val scrollOnItemCount: Int = 20
 
 
