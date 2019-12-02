@@ -13,6 +13,7 @@ QiitaAPIを使用して記事を取得・表示します。
 
 ## 使用している技術
 ・Kotlin<br>
+・MVVM<br>
 ・Retrofit2<br>
 ・RxJava2<br>
 ・Realm<br>
