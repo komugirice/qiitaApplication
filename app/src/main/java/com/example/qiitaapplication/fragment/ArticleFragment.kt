@@ -42,7 +42,7 @@ class ArticleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
+        //inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
 
         // initBinding
         binding = FragmentArticleBinding.inflate(inflater, container, false)
