@@ -45,10 +45,10 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             val holder = RowViewHolder(RowBinding.inflate(inflater, parent, false))
 
             // row.xmlをインフレートし、1行分の画面部品とする。
-            val view = inflater.inflate(R.layout.row, parent, false)
+            // val view = inflater.inflate(R.layout.row, parent, false)
 
             // クリックリスナを搭載
-            holder.binding.ConstraintLayout.setOnClickListener(object : View.OnClickListener {
+            holder.binding.root.setOnClickListener(object : View.OnClickListener {
             //view.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(view: View) {
 
