@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.komugirice.qiitaapplication
 
 import android.app.Activity
 import android.content.Context
@@ -10,11 +10,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cunoraz.tagview.Tag
-import com.example.qiitaapplication.activity.SearchActivity
-import com.example.qiitaapplication.activity.WebViewActivity
-import com.example.qiitaapplication.databinding.RowBinding
-import com.example.qiitaapplication.dataclass.ArticleRow
-import com.example.qiitaapplication.extension.toggle
+import com.komugirice.qiitaapplication.activity.SearchActivity
+import com.komugirice.qiitaapplication.activity.WebViewActivity
+import com.komugirice.qiitaapplication.databinding.RowBinding
+import com.komugirice.qiitaapplication.dataclass.ArticleRow
+import com.komugirice.qiitaapplication.extension.toggle
 
 
 /**
@@ -42,7 +42,10 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             // レイアウトインフレータを取得。
             val inflater = LayoutInflater.from(context)
             // ビューホルダオブジェクトを生成。
-            val holder = RowViewHolder(RowBinding.inflate(inflater, parent, false))
+            val holder =
+                RowViewHolder(
+                    RowBinding.inflate(inflater, parent, false)
+                )
 
             // row.xmlをインフレートし、1行分の画面部品とする。
             // val view = inflater.inflate(R.layout.row, parent, false)
@@ -87,7 +90,9 @@ class ArticleAdapter(private val context: Context?, private val isFavorite: Bool
             // 生成したビューホルダをリターン。
             return holder
         } else {
-            return EmptyViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_row, parent, false))
+            return EmptyViewHolder(
+                LayoutInflater.from(context).inflate(R.layout.empty_row, parent, false)
+            )
         }
     }
 

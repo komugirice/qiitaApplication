@@ -1,11 +1,11 @@
-package com.example.qiitaapplication.viewModel
+package com.komugirice.qiitaapplication.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.qiitaapplication.ArticleAdapter
-import com.example.qiitaapplication.QiitaApi
-import com.example.qiitaapplication.activity.SearchActivity
-import com.example.qiitaapplication.dataclass.ArticleRow
+import com.komugirice.qiitaapplication.ArticleAdapter
+import com.komugirice.qiitaapplication.QiitaApi
+import com.komugirice.qiitaapplication.activity.SearchActivity
+import com.komugirice.qiitaapplication.dataclass.ArticleRow
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -44,7 +44,8 @@ class ArticleViewModel: ViewModel() {
                 var articleRowList : MutableList<ArticleRow>  = mutableListOf()
                 it.forEach({
                         resp ->
-                    val row = ArticleRow()
+                    val row =
+                        ArticleRow()
                     row.convertFromQiitaResponse(resp)
                     articleRowList.add(row)
                 })
@@ -118,7 +119,8 @@ class ArticleViewModel: ViewModel() {
                 // RecyclerViewのAdapter用のMutableList<ArticleRow>に変換
                 var articleRowList: MutableList<ArticleRow> = mutableListOf()
                 it.forEach({ resp ->
-                    val row = ArticleRow()
+                    val row =
+                        ArticleRow()
                     row.convertFromQiitaResponse(resp)
                     articleRowList.add(row)
                 })

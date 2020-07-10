@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.fragment
+package com.komugirice.qiitaapplication.fragment
 
 
 import android.os.Bundle
@@ -12,11 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.example.qiitaapplication.ArticleAdapter
-import com.example.qiitaapplication.EndlessScrollListener
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.databinding.FragmentArticleBinding
-import com.example.qiitaapplication.viewModel.ArticleViewModel
+import com.komugirice.qiitaapplication.ArticleAdapter
+import com.komugirice.qiitaapplication.EndlessScrollListener
+import com.komugirice.qiitaapplication.R
+import com.komugirice.qiitaapplication.databinding.FragmentArticleBinding
+import com.komugirice.qiitaapplication.viewModel.ArticleViewModel
 import kotlinx.android.synthetic.main.fragment_article.*
 import retrofit2.HttpException
 import java.net.UnknownHostException
@@ -32,7 +32,12 @@ class ArticleFragment : Fragment() {
 
     private val handler = Handler()
     /** ArticleAdapter */
-    private val customAdapter by lazy { ArticleAdapter(context, false) }
+    private val customAdapter by lazy {
+        ArticleAdapter(
+            context,
+            false
+        )
+    }
     /** EndlessScrollListenerインスタンス */
     private lateinit var mEndlessScrollListener: EndlessScrollListener
 
@@ -42,7 +47,7 @@ class ArticleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        //inflater.inflate(com.example.qiitaapplication.R.layout.fragment_article, container, false)
+        //inflater.inflate(com.komugirice.qiitaapplication.R.layout.fragment_article, container, false)
 
         // initBinding
         binding = FragmentArticleBinding.inflate(inflater, container, false)
@@ -125,7 +130,8 @@ class ArticleFragment : Fragment() {
             setHasFixedSize(true)
 
             // EndlessScrollListenerのインスタンス化
-            mEndlessScrollListener = object:EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
+            mEndlessScrollListener = object:
+                EndlessScrollListener(articleListView.layoutManager as LinearLayoutManager) {
                 override fun onLoadMore(current_page: Int) {
                     swipeRefreshLayout.isRefreshing = true
                     // API実行

@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.activity
+package com.komugirice.qiitaapplication.activity
 
 import android.content.Context
 import android.os.Bundle
@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.extension.toggle
-import com.example.qiitaapplication.fragment.ArticleFragment
-import com.example.qiitaapplication.fragment.FavoriteFragment
+import com.komugirice.qiitaapplication.R
+import com.komugirice.qiitaapplication.extension.toggle
+import com.komugirice.qiitaapplication.fragment.ArticleFragment
+import com.komugirice.qiitaapplication.fragment.FavoriteFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -27,7 +27,12 @@ class MainActivity : AppCompatActivity() {
 
     val SEARCH_BODY = 0
 
-    private val customAdapter by lazy { CustomAdapter(this, supportFragmentManager) }
+    private val customAdapter by lazy {
+        CustomAdapter(
+            this,
+            supportFragmentManager
+        )
+    }
 
     /**
      * onCreateメソッド
@@ -36,7 +41,7 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.qiitaapplication.R.layout.activity_main)
+        setContentView(com.komugirice.qiitaapplication.R.layout.activity_main)
         initialize()
     }
 
@@ -96,7 +101,11 @@ class MainActivity : AppCompatActivity() {
                 // EditTextに値がある場合
                 if(textView.text.toString().isNotEmpty()) {
                     // SearchActivityに遷移
-                    SearchActivity.start(this, textView.text.toString(), false)
+                    SearchActivity.start(
+                        this,
+                        textView.text.toString(),
+                        false
+                    )
                 }
                 //true
             }
@@ -124,14 +133,14 @@ class MainActivity : AppCompatActivity() {
      */
 //    override fun onCreateOptionsMenu(menu: Menu) : Boolean {
 //        // オプションメニュー用xmlファイルをインフレイト
-//        menuInflater.inflate(com.example.qiitaapplication.R.menu.menu_options_menu_list, menu)
+//        menuInflater.inflate(com.komugirice.qiitaapplication.R.menu.menu_options_menu_list, menu)
 //
 //        //=== searchView設定 ===
-//        val searchItem = menu.findItem(com.example.qiitaapplication.R.id.searchView) as MenuItem
+//        val searchItem = menu.findItem(com.komugirice.qiitaapplication.R.id.searchView) as MenuItem
 //        val searchView = searchItem.getActionView() as SearchView
 //
 //        // SearchViewに何も入力していない時のテキストを設定
-//        searchView.setQueryHint(this.getResources().getString(com.example.qiitaapplication.R.string.label_search_title))
+//        searchView.setQueryHint(this.getResources().getString(com.komugirice.qiitaapplication.R.string.label_search_title))
 //
 //        // イベントリスナ設定
 //        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -175,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 //
 //        when(item.itemId) {
 //            // 終了
-//            com.example.qiitaapplication.R.id.menuListOptionsFinish -> finish()
+//            com.komugirice.qiitaapplication.R.id.menuListOptionsFinish -> finish()
 //        }
 //
 //        return super.onOptionsItemSelected(item)

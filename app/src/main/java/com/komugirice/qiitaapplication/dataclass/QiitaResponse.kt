@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.dataclass
+package com.komugirice.qiitaapplication.dataclass
 import com.google.gson.annotations.SerializedName
 
 /*

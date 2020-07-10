@@ -4,7 +4,7 @@
     <data>
         <variable
             name="articleRow"
-            type="com.example.qiitaapplication.dataclass.ArticleRow" />
+            type="com.komugirice.qiitaapplication.dataclass.ArticleRow" />
         <variable
             name="bindUserInfo"
             type="String" />

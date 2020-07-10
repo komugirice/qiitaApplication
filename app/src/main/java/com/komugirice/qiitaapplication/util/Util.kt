@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.util
+package com.komugirice.qiitaapplication.util
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter

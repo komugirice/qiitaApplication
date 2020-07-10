@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.komugirice.qiitaapplication
 
 import org.junit.Test
 

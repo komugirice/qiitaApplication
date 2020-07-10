@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.extension
+package com.komugirice.qiitaapplication.extension
 
 import java.text.ParseException
 import java.text.SimpleDateFormat

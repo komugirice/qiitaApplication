@@ -1,8 +1,8 @@
-package com.example.qiitaapplication.dataclass
+package com.komugirice.qiitaapplication.dataclass
 
 import android.util.Log
-import com.example.qiitaapplication.extension.getDateToString
-import com.example.qiitaapplication.extension.utcDateToDate
+import com.komugirice.qiitaapplication.extension.getDateToString
+import com.komugirice.qiitaapplication.extension.utcDateToDate
 import io.realm.Realm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -48,7 +48,8 @@ open class ArticleRow (
             }
 
         fun showAll() {
-            findAll().forEach {
+            findAll()
+                .forEach {
                 Log.d("Favorite", "$it")
             }
         }

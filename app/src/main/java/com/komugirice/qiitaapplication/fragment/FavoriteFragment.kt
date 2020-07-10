@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.fragment
+package com.komugirice.qiitaapplication.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.qiitaapplication.ArticleAdapter
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.dataclass.ArticleRow
+import com.komugirice.qiitaapplication.ArticleAdapter
+import com.komugirice.qiitaapplication.R
+import com.komugirice.qiitaapplication.dataclass.ArticleRow
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_favorite.*
@@ -19,7 +19,12 @@ import kotlinx.android.synthetic.main.fragment_favorite.*
 class FavoriteFragment : Fragment() {
 
     /** RecyclerListAdapter */
-    private val customAdapter by lazy { ArticleAdapter(context, true) }
+    private val customAdapter by lazy {
+        ArticleAdapter(
+            context,
+            true
+        )
+    }
     /** Realmインスタンス */
     lateinit var mRealm: Realm
     /** お気に入りリスト */

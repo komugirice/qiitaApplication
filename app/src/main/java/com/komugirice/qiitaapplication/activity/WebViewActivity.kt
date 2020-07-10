@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.activity
+package com.komugirice.qiitaapplication.activity
 
 import android.content.Context
 import android.content.Intent
@@ -10,9 +10,9 @@ import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.dataclass.ArticleRow
-import com.example.qiitaapplication.extension.getDateToString
+import com.komugirice.qiitaapplication.R
+import com.komugirice.qiitaapplication.dataclass.ArticleRow
+import com.komugirice.qiitaapplication.extension.getDateToString
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_web_view.*
 import java.util.*

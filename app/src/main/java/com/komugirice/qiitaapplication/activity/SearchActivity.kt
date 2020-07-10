@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.activity
+package com.komugirice.qiitaapplication.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -12,11 +12,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
-import com.example.qiitaapplication.ArticleAdapter
-import com.example.qiitaapplication.EndlessScrollListener
-import com.example.qiitaapplication.R
-import com.example.qiitaapplication.databinding.ActivitySearchBinding
-import com.example.qiitaapplication.viewModel.ArticleViewModel
+import com.komugirice.qiitaapplication.ArticleAdapter
+import com.komugirice.qiitaapplication.EndlessScrollListener
+import com.komugirice.qiitaapplication.R
+import com.komugirice.qiitaapplication.databinding.ActivitySearchBinding
+import com.komugirice.qiitaapplication.viewModel.ArticleViewModel
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_web_view.toolbar
@@ -34,7 +34,12 @@ class SearchActivity : AppCompatActivity() {
     lateinit var mRealm: Realm
 
     /** RecyclerListAdapter */
-    private val customAdapter by lazy { ArticleAdapter(this, false) }
+    private val customAdapter by lazy {
+        ArticleAdapter(
+            this,
+            false
+        )
+    }
 
     /** 検索タイプ */
     private val searchType by lazy { if (intent.getBooleanExtra(KEY_IS_SEARCH_BY_TAG, false)) SEARCH_TAG else SEARCH_BODY }

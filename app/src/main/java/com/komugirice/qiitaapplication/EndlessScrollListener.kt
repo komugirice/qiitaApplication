@@ -1,4 +1,4 @@
-package com.example.qiitaapplication
+package com.komugirice.qiitaapplication
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
