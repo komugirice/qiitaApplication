@@ -1,6 +1,6 @@
-package com.example.qiitaapplication
+package com.komugirice.qiitaapplication
 
-import com.example.qiitaapplication.dataclass.QiitaResponse
+import com.komugirice.qiitaapplication.dataclass.QiitaResponse
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,8 +12,10 @@ import retrofit2.http.Query
 
 object QiitaApi {
 
-    val itemsIF: ItemsIF by lazy { retrofitApi().create(ItemsIF::class.java)}
-    val tagsIF: TagsIF by lazy { retrofitApi().create(TagsIF::class.java)}
+    val itemsIF: ItemsIF by lazy { retrofitApi()
+        .create(ItemsIF::class.java)}
+    val tagsIF: TagsIF by lazy { retrofitApi()
+        .create(TagsIF::class.java)}
 
     fun retrofitApi(client: OkHttpClient): Retrofit =
         Retrofit.Builder()
