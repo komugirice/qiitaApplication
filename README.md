@@ -18,5 +18,5 @@ QiitaAPIを使用して記事を取得・表示します。
 ・RxJava2<br>
 ・Realm<br>
 
-## ※Google Playに公開しました
+## ※Google Playにベータ版を公開しました
 https://play.google.com/store/apps/details?id=com.komugirice.qiitaapplication
