@@ -17,3 +17,6 @@ QiitaAPIを使用して記事を取得・表示します。
 ・Retrofit2<br>
 ・RxJava2<br>
 ・Realm<br>
+
+## ※Google Playにベータ版を公開しました
+https://play.google.com/store/apps/details?id=com.komugirice.qiitaapplication
